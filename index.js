@@ -8,7 +8,7 @@ const cookieParser = require("cookie-parser");
 const app = express();
 
 const userRoute = require("./routes/userRoute");
-const conversationRoute = require("./routes/ConversationRoute");
+const conversationRoute = require("./routes/conversationRoute");
 const postRoute = require("./routes/postRoute");
 const authRoute = require("./routes/authRoute");
 // middleware
