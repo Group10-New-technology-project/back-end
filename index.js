@@ -2,6 +2,9 @@ const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
 require("dotenv").config();
+const cors = require("cors");
+const cookieParser = require("cookie-parser");
+
 const app = express();
 
 const userRoute = require("./routes/userRoute");
@@ -11,7 +14,8 @@ const authRoute = require("./routes/authRoute");
 // middleware
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
-
+app.use(cors());
+app.use(cookieParser());
 // database connection
 const dbURI = process.env.MONGODB_URI;
 mongoose

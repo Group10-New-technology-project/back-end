@@ -77,49 +77,59 @@ const authController = {
       if (user && validPassword) {
         //Generate access token
         const accessToken = authController.generateAccessToken(user);
+        //Generate refresh token
+        const refreshToken = authController.generateRefreshToken(user);
+
+        res.cookie("refreshToken", refreshToken, {
+          httpOnly: true,
+          secure: false,
+          path: "/",
+          sameSite: "strict",
+        });
         // hidden password
         const { password, ...others } = user._doc;
 
-        res.status(200).json({ ...others, accessToken });
+        res.status(200).json({ ...others, accessToken, refreshToken });
       }
     } catch (err) {
       res.status(500).json(err);
     }
   },
 
-  //   requestRefreshToken: async (req, res) => {
-  //     //Take refresh token from user
-  //     const refreshToken = req.cookies.refreshToken;
-  //     //Send error if token is not valid
-  //     if (!refreshToken) return res.status(401).json("You're not authenticated");
-  //     jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY, (err, user) => {
-  //       if (err) {
-  //         console.log(err);
-  //       }
-  //       refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
-  //       //create new access token, refresh token and send to user
-  //       const newAccessToken = authController.generateAccessToken(user);
-  //       const newRefreshToken = authController.generateRefreshToken(user);
-  //       refreshTokens.push(newRefreshToken);
-  //       res.cookie("refreshToken", refreshToken, {
-  //         httpOnly: true,
-  //         secure: false,
-  //         path: "/",
-  //         sameSite: "strict",
-  //       });
-  //       res.status(200).json({
-  //         accessToken: newAccessToken,
-  //         refreshToken: newRefreshToken,
-  //       });
-  //     });
-  //   },
+  requestRefreshToken: async (req, res) => {
+    //Take refresh token from user
+    const refreshToken = req.cookies.refreshToken;
+    //Send error if token is not valid
+    if (!refreshToken) return res.status(401).json("You're not authenticated");
+    jwt.verify(refreshToken, process.env.JWT_REFRESH_KEY, (err, user) => {
+      if (err) {
+        console.log(err);
+        return res.status(500).json({ error: "Internal Server Error" });
+      }
+      refreshTokens = refreshTokens.filter((token) => token !== refreshToken);
+      //create new access token, refresh token and send to user
+      const newAccessToken = authController.generateAccessToken(user);
+      const newRefreshToken = authController.generateRefreshToken(user);
+      refreshTokens.push(newRefreshToken);
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: false,
+        path: "/",
+        sameSite: "strict",
+      });
+      return res.status(200).json({
+        accessToken: newAccessToken,
+        refreshToken: newRefreshToken,
+      });
+    });
+  },
 
-  //   //LOG OUT
-  //   logOut: async (req, res) => {
-  //     //Clear cookies when user logs out
-  //     res.clearCookie("refreshToken");
-  //     res.status(200).json("Logged out successfully!");
-  //   },
+  //LOG OUT
+  logOut: async (req, res) => {
+    //Clear cookies when user logs out
+    res.clearCookie("refreshToken");
+    res.status(200).json("Logged out successfully!");
+  },
 };
 
 module.exports = authController;
