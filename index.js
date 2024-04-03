@@ -7,7 +7,7 @@ const app = express();
 const userRoute = require("./routes/userRoute");
 const conversationRoute = require("./routes/ConversationRoute");
 const postRoute = require("./routes/postRoute");
-
+const authRoute = require("./routes/authRoute");
 // middleware
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
@@ -27,14 +27,11 @@ mongoose
 app.use("/api/v1/users", userRoute);
 app.use("/api/v1/conversation", conversationRoute);
 app.use("/api/v1/posts", postRoute);
-
-
-
+app.use("/api/v1/auth", authRoute);
 app.use(function (req, res) {
-  res.status(404).send('Not found');
+  res.status(404).send("Not found");
 });
 
 app.listen(3000, () => {
   console.log("Server is running on port 3000.");
 });
-

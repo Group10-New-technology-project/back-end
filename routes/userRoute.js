@@ -1,4 +1,3 @@
-
 const { Router } = require("express");
 const userController = require("../controllers/userController");
 
@@ -18,6 +17,9 @@ router.get("/getfriend/:id", userController.getfriend);
 // http://localhost:3000/api/v1/users/getphonebook/60aae4843ae33121e0de8506
 router.get("/getphonebook/:id", userController.getPhoneBook);
 
+//get all user
+router.get("/", userController.getAllUser);
 
-
+//get delete user
+router.delete("/:id", userController.deleteUser);
 module.exports = router;

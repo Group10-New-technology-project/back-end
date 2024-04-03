@@ -17,7 +17,7 @@ const login = async (req, res) => {
 };
 
 const signup = async (req, res) => {
-  const { username, password, dateofbirth, gender, name } = req.body;
+  const { username, password, name } = req.body;
   try {
     const existingUser = await User.findOne({ username });
     if (existingUser) {
@@ -28,8 +28,8 @@ const signup = async (req, res) => {
       password,
       avatar: "",
       coveravatar: "",
-      dateofbirth,
-      gender,
+      dateofbirth: "",
+      gender: "",
       name,
       phoneBook: [],
       friends: [],
@@ -81,9 +81,29 @@ const getPhoneBook = async (req, res) => {
   }
 };
 
+const getAllUser = async (req, res) => {
+  try {
+    const user = await User.find();
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+const deleteUser = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    res.status(200).json("Delete successfully");
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
 module.exports = {
   login,
   signup,
   getfriend,
   getPhoneBook,
+  getAllUser,
+  deleteUser,
 };
