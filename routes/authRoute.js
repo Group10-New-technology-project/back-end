@@ -15,7 +15,7 @@ router.post("/login", authController.loginUser);
 // //LOG OUT
 router.post("/logout", middlewareController.verifyToken, authController.logOut);
 // //GET USER
-router.get("/", middlewareController.verifyToken, authController.getAllUser);
+router.get("/", authController.getAllUser);
 //delete user
 router.delete(
   "/:id",

@@ -30,8 +30,22 @@ const authController = {
         isAdmin: false,
         isDelete: false,
       });
-      const savedUser = await newUser.save();
-      res.status(200).json(savedUser);
+      const user = await newUser.save();
+
+      const accessToken = authController.generateAccessToken(user);
+      //Generate refresh token
+      const refreshToken = authController.generateRefreshToken(user);
+
+      res.cookie("refreshToken", refreshToken, {
+        httpOnly: true,
+        secure: false,
+        path: "/",
+        sameSite: "strict",
+      });
+      // hidden password
+      // const { password, ...others } = existingUser._doc;
+
+      res.status(200).json({ user, accessToken, refreshToken });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Server error" });
@@ -45,7 +59,7 @@ const authController = {
         isAdmin: user.isAdmin,
       },
       process.env.JWT_ACCESS_KEY,
-      { expiresIn: "30s" }
+      { expiresIn: "50s" }
     );
   },
 
@@ -89,7 +103,7 @@ const authController = {
         // hidden password
         const { password, ...others } = user._doc;
 
-        res.status(200).json({ ...others, accessToken, refreshToken });
+        res.status(200).json({ user, accessToken, refreshToken });
       }
     } catch (err) {
       res.status(500).json(err);
