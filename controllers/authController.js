@@ -45,7 +45,7 @@ const authController = {
         isAdmin: user.isAdmin,
       },
       process.env.JWT_ACCESS_KEY,
-      { expiresIn: "20s" }
+      { expiresIn: "30s" }
     );
   },
 
@@ -129,6 +129,23 @@ const authController = {
     //Clear cookies when user logs out
     res.clearCookie("refreshToken");
     res.status(200).json("Logged out successfully!");
+  },
+
+  getAllUser: async (req, res) => {
+    try {
+      const user = await User.find();
+      res.status(200).json(user);
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+  deleteUser: async (req, res) => {
+    try {
+      const user = await User.findById(req.params.id);
+      res.status(200).json("Delete successfully");
+    } catch (err) {
+      res.status(500).json(err);
+    }
   },
 };
 

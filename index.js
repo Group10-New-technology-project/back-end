@@ -11,6 +11,7 @@ const userRoute = require("./routes/userRoute");
 const conversationRoute = require("./routes/conversationRoute");
 const postRoute = require("./routes/postRoute");
 const authRoute = require("./routes/authRoute");
+const postMessageRoute = require("./routes/messageRoute");
 // middleware
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
@@ -32,6 +33,7 @@ app.use("/api/v1/users", userRoute);
 app.use("/api/v1/conversation", conversationRoute);
 app.use("/api/v1/posts", postRoute);
 app.use("/api/v1/auth", authRoute);
+app.use("/api/v1/messages", postMessageRoute);
 app.use(function (req, res) {
   res.status(404).send("Not found");
 });

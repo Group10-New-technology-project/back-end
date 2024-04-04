@@ -1,4 +1,3 @@
-
 // tạo 1 dbs tên là zalo
 
 // có bảng tên là users
@@ -24,7 +23,6 @@
 // phone
 // updateat
 
-
 // banng tên coversation
 // có các trường sau
 // _id
@@ -32,7 +30,7 @@
 // type
 // members : Object[] // mảng các id thành viên
 // pinMessage : Object[] // mảng các id tin nhắn đã pin
-// lastMessage 
+// lastMessage
 // learder  // id người tạo nhóm
 // createAt
 // isjoinfromlink // có tham gia từ link không
@@ -43,7 +41,6 @@
 // userId
 // isNotify // có thông báo không
 // lastSeen // thời gian cuối cùng xem tin nhắn
-
 
 // bảng tên message
 // có các trường sau
@@ -57,7 +54,6 @@
 // recallMessage // id tin nhắn thu hồi
 // reaction : Object[] // mảng các id người dùng đã phản ứng
 // tag : Object[] // mảng các id người dùng đã tag
-
 
 // bảng tên reaction
 // có các trường sau
@@ -91,45 +87,68 @@
 // like // số lượt like
 // reply // mảng các id reply
 
-
-use('zalo')
+use("zalo");
 
 // Tạo bảng users
-db.createCollection('users')
+db.createCollection("users");
 // Tạo bảng phonebook
-db.createCollection('phonebooks')
+db.createCollection("phonebooks");
 // Tạo bảng conversation
-db.createCollection('conversations')
+db.createCollection("conversations");
 // Tạo bảng member
-db.createCollection('members')
+db.createCollection("members");
 // Tạo bảng message
-db.createCollection('messages')
+db.createCollection("messages");
 // Tạo bảng reaction
-db.createCollection('reactions')
+db.createCollection("reactions");
 // Tạo bảng post
-db.createCollection('posts')
+db.createCollection("posts");
 // Tạo bảng comment
-db.createCollection('comments')
-
+db.createCollection("comments");
 
 db.phonebooks.insertMany([
-  { _id: ObjectId("60aae4843ae33121e0de8501"), name: "John Doe", phone: "123456789", updateat: new Date() },
-  { _id: ObjectId("60aae4843ae33121e0de8502"), name: "Jane Smith", phone: "987654321", updateat: new Date() },
-  { _id: ObjectId("60aae4843ae33121e0de8503"), name: "Michael Johnson", phone: "456789123", updateat: new Date() },
-  { _id: ObjectId("60aae4843ae33121e0de8504"), name: "Emily Brown", phone: "741852963", updateat: new Date() },
-  { _id: ObjectId("60aae4843ae33121e0de8505"), name: "David Wilson", phone: "159753456", updateat: new Date() }
+  {
+    _id: ObjectId("60aae4843ae33121e0de8501"),
+    name: "John Doe",
+    phone: "123456789",
+    updateat: new Date(),
+  },
+  {
+    _id: ObjectId("60aae4843ae33121e0de8502"),
+    name: "Jane Smith",
+    phone: "987654321",
+    updateat: new Date(),
+  },
+  {
+    _id: ObjectId("60aae4843ae33121e0de8503"),
+    name: "Michael Johnson",
+    phone: "456789123",
+    updateat: new Date(),
+  },
+  {
+    _id: ObjectId("60aae4843ae33121e0de8504"),
+    name: "Emily Brown",
+    phone: "741852963",
+    updateat: new Date(),
+  },
+  {
+    _id: ObjectId("60aae4843ae33121e0de8505"),
+    name: "David Wilson",
+    phone: "159753456",
+    updateat: new Date(),
+  },
 ]);
 
 db.users.insertMany([
   {
     _id: ObjectId("60aae4843ae33121e0de8506"),
-    avatar: "link_to_avatar_1",
+    avatar: "https://image666666.s3.ap-southeast-1.amazonaws.com/an.png",
     coveravatar: "link_to_cover_1",
     dateofbirth: ISODate("1990-01-01"),
     gender: "male",
-    name: "John Doe",
+    name: "Nguyễn Nhất An",
     username: "0909878765",
-    password: "password_1",
+    password: "$2b$10$vbUKrFNutR00mYVq3M.2kOS5VTC0rZBdtsyEWAHJSmcydxiAi5L4m",
     isActive: true,
     isAdmin: false,
     phoneBook: [
@@ -140,19 +159,19 @@ db.users.insertMany([
     isDelete: false,
     friends: [
       ObjectId("60aae4843ae33121e0de8507"),
-      ObjectId("60aae4843ae33121e0de4368")
+      ObjectId("60aae4843ae33121e0de4368"),
     ],
-    friendRequest: []
+    friendRequest: [],
   },
   {
     _id: ObjectId("60aae4843ae33121e0de8507"),
-    avatar: "link_to_avatar_2",
+    avatar: "https://image666666.s3.ap-southeast-1.amazonaws.com/chanh.png",
     coveravatar: "link_to_cover_2",
     dateofbirth: ISODate("1990-01-02"),
     gender: "female",
-    name: "Jane Smith",
+    name: "Phan Lương Trung Chánh",
     username: "0987654324",
-    password: "password_2",
+    password: "$2b$10$vbUKrFNutR00mYVq3M.2kOS5VTC0rZBdtsyEWAHJSmcydxiAi5L4m",
     isActive: true,
     isAdmin: false,
     phoneBook: [
@@ -160,67 +179,61 @@ db.users.insertMany([
       ObjectId("60aae4843ae33121e0de8505"),
     ],
     isDelete: false,
-    friends: [
-      ObjectId("60aae4843ae33121e0de8506")
-    ],
-    friendRequest: []
+    friends: [ObjectId("60aae4843ae33121e0de8506")],
+    friendRequest: [],
   },
   {
     _id: ObjectId("60aae4843ae33121e0de4368"),
-    avatar: "link_to_avatar_3",
+    avatar: "https://image666666.s3.ap-southeast-1.amazonaws.com/duy.png",
     coveravatar: "link_to_cover_3",
     dateofbirth: ISODate("1990-01-04"),
     gender: "female",
-    name: "Emily Brown",
+    name: "Nguyễn Minh Duy",
     username: "0676542567",
-    password: "password_3",
+    password: "$2b$10$vbUKrFNutR00mYVq3M.2kOS5VTC0rZBdtsyEWAHJSmcydxiAi5L4m",
     isActive: true,
     isAdmin: false,
     phoneBook: [
       ObjectId("60aae4843ae33121e0de8501"),
       ObjectId("60aae4843ae33121e0de8502"),
-
     ],
     isDelete: false,
-    friends: [
-      ObjectId("60aae4843ae33121e0de8506")
-    ],
-    friendRequest: []
-  }
+    friends: [ObjectId("60aae4843ae33121e0de8506")],
+    friendRequest: [],
+  },
 ]);
-
 
 db.reactions.insertMany([
   {
     _id: ObjectId("60aae4843ae33121e0de7689"),
     typeReaction: "like",
     status: "active",
-    quantity: 100
+    quantity: 100,
   },
   {
     _id: ObjectId("60aae4843ae33121e0de4329"),
     typeReaction: "love",
     status: "active",
-    quantity: 50
+    quantity: 50,
   },
   {
     _id: ObjectId("60aae4843ae33121e0de0932"),
     typeReaction: "wow",
     status: "active",
-    quantity: 30
+    quantity: 30,
   },
   {
     _id: ObjectId("60aae4843ae33121e0de9930"),
     typeReaction: "angry",
     status: "active",
-    quantity: 20
+    quantity: 20,
   },
   {
     _id: ObjectId("60aae4843ae33121e0de2296"),
     typeReaction: "sad",
     status: "active",
-    quantity: 10
-  }
+    quantity: 10,
+  },
 ]);
 
 db.members.insertMany([
@@ -228,120 +241,173 @@ db.members.insertMany([
     _id: ObjectId("60aae4843ae33121e0de8501"),
     userId: ObjectId("60aae4843ae33121e0de8506"),
     isNotify: true,
-    lastSeen: new Date()
+    lastSeen: new Date(),
   },
   {
     _id: ObjectId("60aae4843ae33121e0de1234"),
     userId: ObjectId("60aae4843ae33121e0de8507"),
     isNotify: false,
-    lastSeen: new Date()
+    lastSeen: new Date(),
   },
   {
     _id: ObjectId("60aae4843ae33121e0de8763"),
     userId: ObjectId("60aae4843ae33121e0de4368"),
     isNotify: true,
-    lastSeen: new Date()
-  }
+    lastSeen: new Date(),
+  },
 ]);
-
 db.messages.insertMany([
   {
     _id: ObjectId("60aae4843ae33121e0de1235"), // Giá trị _id có dữ liệu
-    content: "Message chat 1 content 1",
+    content: "Làm bài tập nhóm nhé",
     memberId: ObjectId("60aae4843ae33121e0de8501"), // ID của thành viên gửi tin nhắn
     type: "text",
     createAt: new Date(),
     deleteMember: [], // Không có thành viên nào đã xóa tin nhắn
     recallMessage: false, // Không có tin nhắn nào được thu hồi
-    reaction: [
-      ObjectId("60aae4843ae33121e0de7689")
-    ], // Không có phản ứng nào
-    tag: [] // Không có tag nào
+    reaction: [ObjectId("60aae4843ae33121e0de7689")], // Không có phản ứng nào
+    tag: [], // Không có tag nào
   },
   {
     _id: ObjectId("60aae4843ae33121e0de5678"), // Giá trị _id có dữ liệu
-    content: "Message chat 1 content 2",
+    content:
+      "Đoạn văn là một đơn vị văn bản nhỏ, được sắp xếp theo một luồng ý để trình bày một ý kiến, một suy nghĩ hoặc một phần của nội dung. Nó bao gồm một tập hợp các câu văn có liên quan, có mục đích chung và được sắp xếp một cách logic",
     memberId: ObjectId("60aae4843ae33121e0de1234"), // ID của thành viên gửi tin nhắn
     type: "text",
     createAt: new Date(),
     deleteMember: [], // Không có thành viên nào đã xóa tin nhắn
     recallMessage: null, // Không có tin nhắn nào được thu hồi
     reaction: [], // Không có phản ứng nào
-    tag: [] // Không có tag nào
+    tag: [], // Không có tag nào
   },
   {
-    _id: ObjectId("60aae4843ae33121e0de9012"), // Giá trị _id có dữ liệu
-    content: "Message chat 1 content 3",
-    memberId: ObjectId("60aae4843ae33121e0de8763"), // ID của thành viên gửi tin nhắn
+    _id: ObjectId("60aae4843ae33121e0de2312"), // Giá trị _id có dữ liệu
+    content: "Mai có thể làm được không?",
+    memberId: ObjectId("60aae4843ae33121e0de1234"), // ID của thành viên gửi tin nhắn
     type: "text",
     createAt: new Date(),
     deleteMember: [], // Không có thành viên nào đã xóa tin nhắn
     recallMessage: null, // Không có tin nhắn nào được thu hồi
     reaction: [], // Không có phản ứng nào
-    tag: [] // Không có tag nào
+    tag: [], // Không có tag nào
   },
   {
-    _id: ObjectId("60aae4843ae33121e0de7777"), // MongoDB sẽ tự động tạo _id mới
-    content: "Message content 4",
+    _id: ObjectId("60aae4843ae33121e0de1121"), // Giá trị _id có dữ liệu
+    content: "Đang ở đâu vậy?",
     memberId: ObjectId("60aae4843ae33121e0de8501"), // ID của thành viên gửi tin nhắn
     type: "text",
     createAt: new Date(),
     deleteMember: [], // Không có thành viên nào đã xóa tin nhắn
     recallMessage: null, // Không có tin nhắn nào được thu hồi
     reaction: [], // Không có phản ứng nào
-    tag: [] // Không có tag nào
-  }
-])
+    tag: [], // Không có tag nào
+  },
+  {
+    _id: ObjectId("60aae4843ae33121e0de9099"), // Giá trị _id có dữ liệu
+    content: "Đi học không tao qua chở",
+    memberId: ObjectId("60aae4843ae33121e0de8763"), // ID của thành viên gửi tin nhắn
+    type: "text",
+    createAt: new Date(),
+    deleteMember: [], // Không có thành viên nào đã xóa tin nhắn
+    recallMessage: null, // Không có tin nhắn nào được thu hồi
+    reaction: [], // Không có phản ứng nào
+    tag: [], // Không có tag nào
+  },
+  {
+    _id: ObjectId("60aae4843ae33121e0de8888"), // Giá trị _id có dữ liệu
+    content: "Ở nhà",
+    memberId: ObjectId("60aae4843ae33121e0de8763"), // ID của thành viên gửi tin nhắn
+    type: "text",
+    createAt: new Date(),
+    deleteMember: [], // Không có thành viên nào đã xóa tin nhắn
+    recallMessage: null, // Không có tin nhắn nào được thu hồi
+    reaction: [], // Không có phản ứng nào
+    tag: [], // Không có tag nào
+  },
+  {
+    _id: ObjectId("60aae4843ae33121e0de9012"), // Giá trị _id có dữ liệu
+    content:
+      "Lorem Ipsum chỉ đơn giản là một đoạn văn bản giả, được dùng vào việc trình bày và dàn trang phục vụ cho in ấn. Lorem Ipsum đã được sử dụng như một văn bản chuẩn cho ngành công nghiệp in ấn từ những năm 1500",
+    memberId: ObjectId("60aae4843ae33121e0de8763"), // ID của thành viên gửi tin nhắn
+    type: "text",
+    createAt: new Date(),
+    deleteMember: [], // Không có thành viên nào đã xóa tin nhắn
+    recallMessage: null, // Không có tin nhắn nào được thu hồi
+    reaction: [], // Không có phản ứng nào
+    tag: [], // Không có tag nào
+  },
+  {
+    _id: ObjectId("60aae4843ae33121e0de7777"), // MongoDB sẽ tự động tạo _id mới
+    content: "Tối nay 7h tập trung nhé",
+    memberId: ObjectId("60aae4843ae33121e0de8501"), // ID của thành viên gửi tin nhắn
+    type: "text",
+    createAt: new Date(),
+    deleteMember: [], // Không có thành viên nào đã xóa tin nhắn
+    recallMessage: null, // Không có tin nhắn nào được thu hồi
+    reaction: [], // Không có phản ứng nào
+    tag: [], // Không có tag nào
+  },
+]);
 
 db.conversations.insertMany([
   {
     _id: ObjectId("60aae4843ae33121e0de0000"),
-    name: "Group Chat 1",
+    name: "Nhóm 10 Công nghệ mới",
     type: "Group",
     members: [
       ObjectId("60aae4843ae33121e0de8501"),
       ObjectId("60aae4843ae33121e0de1234"),
-      ObjectId("60aae4843ae33121e0de8763")
+      ObjectId("60aae4843ae33121e0de8763"),
     ],
     messages: [
       ObjectId("60aae4843ae33121e0de1235"),
+      ObjectId("60aae4843ae33121e0de5678"),
+      ObjectId("60aae4843ae33121e0de9012"),
+      ObjectId("60aae4843ae33121e0de8888"),
+      ObjectId("60aae4843ae33121e0de2312"),
       ObjectId("60aae4843ae33121e0de5678"),
       ObjectId("60aae4843ae33121e0de9012"),
     ],
     groupImage: "",
     leader: ObjectId("60aae4843ae33121e0de8501"),
     createAt: new Date("2024-03-23T10:00:00Z"),
-    isjoinfromlink: true
+    isjoinfromlink: true,
   },
   {
     _id: ObjectId("60aae4843ae33121e0de8502"),
-    name: "Group Chat 2",
+    name: "Nguyễn Nhất An",
     type: "Direct",
     members: [
+      ObjectId("60aae4843ae33121e0de1234"),
       ObjectId("60aae4843ae33121e0de8501"),
-      ObjectId("60aae4843ae33121e0de1234")
     ],
-    messages: [],
+    messages: [
+      ObjectId("60aae4843ae33121e0de1235"),
+      ObjectId("60aae4843ae33121e0de5678"),
+    ],
     groupImage: "",
     leader: ObjectId("60aae4843ae33121e0de1234"),
     createAt: new Date("2024-03-24T11:00:00Z"),
-    isjoinfromlink: false
+    isjoinfromlink: false,
   },
   {
     _id: ObjectId("60aae4843ae33121e0de8503"),
-    name: "Group Chat 3",
+    name: "Nguyễn Minh Duy",
     type: "Direct",
     members: [
       ObjectId("60aae4843ae33121e0de8763"),
-      ObjectId("60aae4843ae33121e0de8501")
+      ObjectId("60aae4843ae33121e0de1234"),
     ],
-    messages: [],
+    messages: [
+      ObjectId("60aae4843ae33121e0de8888"),
+      ObjectId("60aae4843ae33121e0de2312"),
+    ],
     groupImage: "",
     leader: ObjectId("60aae4843ae33121e0de8763"),
     createAt: new Date("2024-03-24T11:00:00Z"),
-    isjoinfromlink: false
+    isjoinfromlink: false,
   },
-])
+]);
 
 db.comments.insertMany([
   {
@@ -350,7 +416,7 @@ db.comments.insertMany([
     content: "Nội dung comment 1",
     createAt: new Date("2024-03-25T08:00:00Z"), // Thời gian tạo
     isDelete: false,
-    like: 5 // Số lượt like
+    like: 5, // Số lượt like
   },
   {
     _id: ObjectId("60aae4843ae44321e0de9012"), // MongoDB sẽ tự động tạo _id mới
@@ -358,10 +424,9 @@ db.comments.insertMany([
     content: "Nội dung comment 2",
     createAt: new Date("2024-03-25T09:00:00Z"), // Thời gian tạo
     isDelete: false,
-    like: 3 // Số lượt like
-  }
-])
-
+    like: 3, // Số lượt like
+  },
+]);
 
 // Thêm dữ liệu vào bảng post
 db.posts.insertMany([
@@ -376,7 +441,7 @@ db.posts.insertMany([
     isDelete: false,
     isPublic: true,
     comments: [ObjectId("60aae4843ae09876e0de9012")],
-    like: 10 // Số lượt like
+    like: 10, // Số lượt like
   },
   {
     _id: ObjectId("60aae4843ae00098e0de9012"), // MongoDB sẽ tự động tạo _id mới
@@ -389,7 +454,7 @@ db.posts.insertMany([
     isDelete: false,
     isPublic: true,
     comments: [ObjectId("60aae4843ae44321e0de9012")],
-    like: 5 // Số lượt like
+    like: 5, // Số lượt like
   },
   {
     _id: ObjectId("60aae4843ae44435e0de9012"), // MongoDB sẽ tự động tạo _id mới
@@ -402,9 +467,6 @@ db.posts.insertMany([
     isDelete: false,
     isPublic: true,
     comments: [],
-    like: 8 // Số lượt like
-  }
-])
-
-
-
+    like: 8, // Số lượt like
+  },
+]);

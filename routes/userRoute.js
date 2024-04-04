@@ -1,6 +1,5 @@
 const { Router } = require("express");
 const userController = require("../controllers/userController");
-const middlewareController = require("../controllers/middlewareController");
 const router = Router();
 
 // http://localhost:3000/api/v1/users/login
@@ -18,12 +17,8 @@ router.get("/getfriend/:id", userController.getfriend);
 router.get("/getphonebook/:id", userController.getPhoneBook);
 
 //get all user
-router.get("/", middlewareController.verifyToken, userController.getAllUser);
+router.get("/", userController.getAllUser);
 
 //get delete user
-router.delete(
-  "/:id",
-  middlewareController.verifyTokenAndAdminAuth,
-  userController.deleteUser
-);
+router.delete("/:id", userController.deleteUser);
 module.exports = router;

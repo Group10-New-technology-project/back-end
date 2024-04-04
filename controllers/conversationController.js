@@ -4,12 +4,17 @@ const Conversation = require("../models/Conversation");
 
 const getConversations = async (req, res) => {
   try {
-    // await Conversation.deleteMany();
-    const conversation = await Conversation.find()
-      .populate("members")
+    const conversations = await Conversation.find()
+      .populate({
+        path: "members",
+        populate: {
+          path: "userId",
+          model: "User", // Tên của model người dùng trong Mongoose
+        },
+      })
       .populate("messages");
 
-    res.status(200).json(conversation);
+    res.status(200).json(conversations);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });

@@ -2,7 +2,7 @@ const { Router } = require("express");
 const conversationController = require("../controllers/ConversationController");
 
 const router = Router();
-const middlewareController = require("../controllers/middlewareController");
+const middlewareController = require("../middleware/middlewareController");
 
 // API để test Postman
 // http://localhost:3000/api/v1/conversation/getConversationById/60aae4843ae33121e0de0000

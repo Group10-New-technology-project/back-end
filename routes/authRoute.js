@@ -1,6 +1,6 @@
 const authController = require("../controllers/authController");
 const { Router } = require("express");
-const middlewareController = require("../controllers/middlewareController");
+const middlewareController = require("../middleware/middlewareController");
 
 const router = Router();
 // const { verifyToken } = require("../controllers/verifyToken");
@@ -14,5 +14,12 @@ router.post("/refresh", authController.requestRefreshToken);
 router.post("/login", authController.loginUser);
 // //LOG OUT
 router.post("/logout", middlewareController.verifyToken, authController.logOut);
-
+// //GET USER
+router.get("/", middlewareController.verifyToken, authController.getAllUser);
+//delete user
+router.delete(
+  "/:id",
+  middlewareController.verifyToken,
+  authController.deleteUser
+);
 module.exports = router;
