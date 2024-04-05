@@ -24,9 +24,7 @@ const getConversations = async (req, res) => {
 const getConversationById = async (req, res) => {
   const id = req.params.id;
   try {
-    const conversation = await Conversation.findById(id)
-      .populate("members")
-      .populate("messages");
+    const conversation = await Conversation.findById(id).populate("members").populate("messages");
     if (!conversation) {
       return res.status(404).json({ error: "Conversation not found" });
     }
