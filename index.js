@@ -4,9 +4,11 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-const ip = process.env.IP;
 const app = express();
-
+const ip = process.env.IP;
+const port = process.env.PORT;
+process.env.AWS_SDK_SUPPRESS_MAINTENANCE_MODE_MESSAGE = "1";
+// routes
 const userRoute = require("./routes/userRoute");
 const conversationRoute = require("./routes/conversationRoute");
 const postRoute = require("./routes/postRoute");
@@ -42,6 +44,7 @@ app.use(function (req, res) {
 //   console.log("Server is running on port 3000.");
 // });
 
-app.listen(3000, ip, () => {
-  console.log("Server is running on " + ip + ":3000");
+app.listen(port, ip, () => {
+  console.log("Server is running on IP: " + ip);
+  console.log("Server is running on PORT: " + port);
 });
