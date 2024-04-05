@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
-
+const ip = process.env.IP;
 const app = express();
 
 const userRoute = require("./routes/userRoute");
@@ -38,6 +38,10 @@ app.use(function (req, res) {
   res.status(404).send("Not found");
 });
 
-app.listen(3000, () => {
-  console.log("Server is running on port 3000.");
+// app.listen(3000, () => {
+//   console.log("Server is running on port 3000.");
+// });
+
+app.listen(3000, ip, () => {
+  console.log("Server is running on " + ip + ":3000");
 });

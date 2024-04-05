@@ -1,7 +1,6 @@
 const User = require("../models/User");
 const PhoneBook = require("../models/PhoneBook");
 const jwt = require("jsonwebtoken");
-
 const multer = require("multer");
 const AWS = require("aws-sdk");
 const bcrypt = require("bcrypt");
@@ -20,14 +19,33 @@ const upload = multer({
   },
 });
 
+// const login = async (req, res) => {
+//   const { username, password } = req.body;
+//   try {
+//     const user = await User.findOne({ username });
+//     if (!user || user.password !== password) {
+//       return res.status(401).json({ error: "Invalid email or password" });
+//     }
+//     res.status(200).json({ user });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Server error" });
+//   }
+// };
 const login = async (req, res) => {
   const { username, password } = req.body;
   try {
     const user = await User.findOne({ username });
-    if (!user || user.password !== password) {
-      return res.status(401).json({ error: "Invalid email or password" });
+    if (!user) {
+      return res.status(401).json({ error: "Invalid username " });
     }
-    res.status(200).json({ user });
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (!validPassword) {
+      return res.status(401).json({ error: "Invalid password" });
+    }
+    if (user && validPassword) {
+      return res.status(200).json({ user });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
@@ -35,20 +53,22 @@ const login = async (req, res) => {
 };
 
 const signup = async (req, res) => {
-  const { username, password, name } = req.body;
+  const { username, password, name, birthday, gender, imageAvatar } = req.body;
   try {
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
     const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ error: "Username already exists" });
     }
     const newUser = new User({
-      username,
-      password,
-      avatar: "",
+      username: username,
+      password: hashedPassword,
+      avatar: imageAvatar,
       coveravatar: "",
-      dateofbirth: "",
-      gender: "",
-      name,
+      dateofbirth: birthday,
+      gender: gender,
+      name: name,
       phoneBook: [],
       friends: [],
       friendRequest: [],
@@ -57,7 +77,8 @@ const signup = async (req, res) => {
       isDelete: false,
     });
     const savedUser = await newUser.save();
-    res.status(201).json(savedUser);
+    res.status(200).json(savedUser);
+    console.log("Đăng ký thành công");
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
@@ -153,6 +174,35 @@ const uploadAvatarToS3 = async (req, res) => {
   }
 };
 
+// const updateMK = async (req, res) => {
+//   const { username, passwordOld, passwordNew, passwordReNew } = req.body;
+//   try {
+//     const user = await User.findOne({ username });
+//     if (!user) {
+//       return res.status(401).json({ error: "Invalid username" });
+//     }
+//     const validPassword = await bcrypt.compare(passwordOld, user.password);
+//     if (!validPassword) {
+//       return res.status(401).json({ error: "Invalid password" });
+//     }
+//     console.log("1", validPassword);
+//     console.log("2", user.password);
+//     if (passwordNew !== passwordReNew) {
+//       return res.status(401).json({ error: "Invalid Newpassword" });
+//     }
+//     // Cập nhật mật khẩu mới trong cơ sở dữ liệu
+//     const salt = await bcrypt.genSalt(10);
+//     const hashedPasswordNew = await bcrypt.hash(passwordNew, salt);
+//     user.password = hashedPasswordNew; // Không cần mã hóa mật khẩu mới
+//     await user.save();
+
+//     // Gửi phản hồi thành công
+//     res.status(200).json({ message: "Password updated successfully" });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Server error" });
+//   }
+// };
 const updateMK = async (req, res) => {
   const { username, passwordOld, passwordNew, passwordReNew } = req.body;
   try {
@@ -182,6 +232,7 @@ const updateMK = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 const postUserByUserName = async (req, res) => {
   try {
     const { username } = req.body;
