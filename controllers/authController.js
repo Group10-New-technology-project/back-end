@@ -59,7 +59,7 @@ const authController = {
         isAdmin: user.isAdmin,
       },
       process.env.JWT_ACCESS_KEY,
-      { expiresIn: "50s" }
+      { expiresIn: "1d" }
     );
   },
 
@@ -154,6 +154,15 @@ const authController = {
     try {
       const user = await User.findById(req.params.id);
       res.status(200).json("Delete successfully");
+    } catch (err) {
+      res.status(500).json(err);
+    }
+  },
+
+  getUserByID: async (req, res) => {
+    try {
+      const user = await User.findById(req.params.id);
+      res.status(200).json(user);
     } catch (err) {
       res.status(500).json(err);
     }
