@@ -137,7 +137,14 @@ const deleteUser = async (req, res) => {
     res.status(500).json(err);
   }
 };
-
+const getUserByID = async (req, res) => {
+  try {
+    const user = await User.findById(req.body.id);
+    res.status(200).json("Delete successfully");
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
 //Update ảnh user
 const uploadAvatarToS3 = async (req, res) => {
   try {

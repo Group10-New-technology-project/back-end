@@ -15,7 +15,7 @@ router.get(
 // http://localhost:3000/api/v1/conversation/getConversations
 router.get(
   "/getConversations",
-  middlewareController.verifyToken,
+  // middlewareController.verifyToken,
   conversationController.getConversations
 );
 
@@ -23,10 +23,15 @@ router.get(
 // http://localhost:3000/api/v1/conversation/getConversationByMemberId/60aae4843ae33121e0de8501
 router.get(
   "/getConversationByMemberId/:memberId",
-  middlewareController.verifyToken,
+  // middlewareController.verifyToken,
   conversationController.getConversationByMemberId
 );
-
+// http://localhost:3000/api/v1/conversation/getConversationByUserId/60aae4843ae33121e0de8506
+router.get(
+  "/getConversationByUserId/:userId",
+  // middlewareController.verifyToken,
+  conversationController.getConversationByUserId
+);
 // tìm kiếm cuộc trò chuyện theo tên
 // http://localhost:3000/api/v1/conversation/seachConversation?searchConversation=3
 router.post("/seachConversation", conversationController.seachConversation);

@@ -1,7 +1,7 @@
 const Member = require("../models/Member");
 const Message = require("../models/Message");
 const Conversation = require("../models/Conversation");
-
+const Members = require("../models/Member");
 const getConversations = async (req, res) => {
   try {
     const conversations = await Conversation.find()
@@ -48,6 +48,44 @@ const getConversationByMemberId = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+const getConversationByUserId = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Tìm các thành viên có userId trùng khớp
+    const members = await Members.find({ userId: userId });
+    if (!members || members.length === 0) {
+      return res.status(404).json({ message: "Members not found for this user" });
+    }
+
+    const memberId = members[0]._id;
+    console.log("menid da lay", memberId);
+    const conversations = await Conversation.find({
+      members: memberId,
+    })
+      .populate({
+        path: "members",
+        populate: {
+          path: "userId",
+          model: "User", // Tên của model người dùng trong Mongoose
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "memberId",
+          model: "Member", // Tên của model người dùng trong Mongoose
+        },
+      });
+    if (!conversations) {
+      return res.status(404).json({ message: "Conversation not found" });
+    }
+    res.status(200).json(conversations);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
 const seachConversation = async (req, res) => {
   try {
     const searchKeyword = req.query.searchConversation;
@@ -67,4 +105,5 @@ module.exports = {
   getConversationById,
   getConversationByMemberId,
   seachConversation,
+  getConversationByUserId,
 };

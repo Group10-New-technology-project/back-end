@@ -40,9 +40,9 @@ app.use(function (req, res) {
   res.status(404).send("Not found");
 });
 
-// app.listen(3000, () => {
-//   console.log("Server is running on port 3000.");
-// });
+app.listen(3000, () => {
+  console.log("Server is running on port 3000.");
+});
 
 app.listen(port, ip, () => {
   console.log("Server is running on IP: " + ip);

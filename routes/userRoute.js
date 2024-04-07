@@ -1,5 +1,7 @@
 const { Router } = require("express");
 const userController = require("../controllers/userController");
+const multer = require("multer");
+
 const router = Router();
 
 // http://localhost:3000/api/v1/users/login
@@ -23,15 +25,15 @@ router.get("/", userController.getAllUser);
 router.delete("/:id", userController.deleteUser);
 module.exports = router;
 
-//update mk
-// http://192.168.3.190:3000/api/v1/users/updateMK
-// router.get("/updateMK", userController.updateMK);
-// module.exports = router;
-
 //get user by user name
-// router.get("/:username", userController.getUserByUsername);
-
+// router.get("/:username", userController.get);
 
 //get user by user name
 router.post("/updateMk", userController.updateMK);
+
+//forgot password
+//http://localhost:3000/api/v1/users//forgot-password
+router.post("/forgot-password", userController.forgotPassword);
+//http://localhost:3000/api/v1/users/upload-avatar
+router.post("/upload-avatar", multer().single("avatar"), userController.uploadAvatarToS3);
 module.exports = router;
