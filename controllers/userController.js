@@ -181,35 +181,6 @@ const uploadAvatarToS3 = async (req, res) => {
   }
 };
 
-// const updateMK = async (req, res) => {
-//   const { username, passwordOld, passwordNew, passwordReNew } = req.body;
-//   try {
-//     const user = await User.findOne({ username });
-//     if (!user) {
-//       return res.status(401).json({ error: "Invalid username" });
-//     }
-//     const validPassword = await bcrypt.compare(passwordOld, user.password);
-//     if (!validPassword) {
-//       return res.status(401).json({ error: "Invalid password" });
-//     }
-//     console.log("1", validPassword);
-//     console.log("2", user.password);
-//     if (passwordNew !== passwordReNew) {
-//       return res.status(401).json({ error: "Invalid Newpassword" });
-//     }
-//     // Cập nhật mật khẩu mới trong cơ sở dữ liệu
-//     const salt = await bcrypt.genSalt(10);
-//     const hashedPasswordNew = await bcrypt.hash(passwordNew, salt);
-//     user.password = hashedPasswordNew; // Không cần mã hóa mật khẩu mới
-//     await user.save();
-
-//     // Gửi phản hồi thành công
-//     res.status(200).json({ message: "Password updated successfully" });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Server error" });
-//   }
-// };
 const updateMK = async (req, res) => {
   const { username, passwordOld, passwordNew, passwordReNew } = req.body;
   try {
@@ -246,7 +217,7 @@ const postUserByUserName = async (req, res) => {
     const user = await User.findOne({ username });
 
     if (!user) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: "User not found  ko ton tai " });
     }
 
     res.status(200).json(user);

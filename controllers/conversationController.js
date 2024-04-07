@@ -55,7 +55,7 @@ const getConversationByUserId = async (req, res) => {
     // Tìm các thành viên có userId trùng khớp
     const members = await Members.find({ userId: userId });
     if (!members || members.length === 0) {
-      return res.status(404).json({ message: "Members not found for this user" });
+      return res.status(200).json([]);
     }
 
     const memberId = members[0]._id;
