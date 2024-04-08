@@ -59,7 +59,13 @@ const userSchema = new Schema(
     friendRequest: [
       {
         type: Schema.Types.ObjectId,
-        ref: "User", // Tham chiếu tới collection 'User' (chính collection hiện tại)
+        ref: "User", // Tham chiếu tới collection 'User đã gửi' (chính collection hiện tại)
+      },
+    ],
+    friendReceived: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User", // Tham chiếu tới collection 'User đã nhận' (chính collection hiện tại)
       },
     ],
   },

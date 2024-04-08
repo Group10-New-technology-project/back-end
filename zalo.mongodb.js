@@ -159,6 +159,8 @@ db.users.insertMany([
     isDelete: false,
     friends: [ObjectId("60aae4843ae33121e0de8507"), ObjectId("60aae4843ae33121e0de4368")],
     friendRequest: [],
+    friendReceived:[]
+
   },
   {
     _id: ObjectId("60aae4843ae33121e0de8507"),
@@ -175,6 +177,8 @@ db.users.insertMany([
     isDelete: false,
     friends: [ObjectId("60aae4843ae33121e0de8506")],
     friendRequest: [],
+    friendReceived:[]
+    
   },
   {
     _id: ObjectId("60aae4843ae33121e0de4368"),
@@ -191,6 +195,8 @@ db.users.insertMany([
     isDelete: false,
     friends: [ObjectId("60aae4843ae33121e0de8506")],
     friendRequest: [],
+    friendReceived:[]
+
   },
 ]);
 

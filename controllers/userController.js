@@ -72,6 +72,7 @@ const signup = async (req, res) => {
       phoneBook: [],
       friends: [],
       friendRequest: [],
+      friendReceived: [],
       isActive: true,
       isAdmin: false,
       isDelete: false,
@@ -95,8 +96,104 @@ const getfriend = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
     const friendIds = user.friends;
-    const friends = await User.find({ _id: { $in: friendIds } });
-    res.status(200).json(friends);
+    // const friends = await User.find({ _id: { $in: friendIds } });
+    res.status(200).json(friendIds);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+const getfriendRequest = async (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+  try {
+    const user = await User.findById(id);
+    console.log(user);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const friendIds = user.friendRequest;
+    // const friends = await User.find({ _id: { $in: friendIds } });
+    res.status(200).json(friendIds);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+const addFriendRequest = async (req, res) => {
+  const { id_sender, id_receiver } = req.body;
+  try {
+    const sender = await User.findById(id_sender);
+    const receiver = await User.findById(id_receiver);
+    if (!sender || !receiver) {
+      return res.status(400).json({ error: "sender null or receiver null" });
+    }
+    sender.friendRequest.push(id_receiver);
+    await sender.save();
+
+    // Thêm id_sender vào mảng friendRequest của người nhận
+    receiver.friendReceived.push(id_sender);
+    await receiver.save();
+
+    console.log("Gửi yêu cầu kết bạn thành công");
+    res.status(200).json({ sender, receiver });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+const deleteFriendRequest = async (req, res) => {
+  const { id_sender, id_receiver } = req.body;
+  try {
+    // Tìm người gửi và người nhận dựa trên id_sender và id_receiver
+    const sender = await User.findById(id_sender);
+    const receiver = await User.findById(id_receiver);
+
+    // Kiểm tra xem người gửi và người nhận có tồn tại không
+    if (!sender || !receiver) {
+      return res.status(400).json({ error: "Sender or receiver not found" });
+    }
+
+    // Loại bỏ yêu cầu kết bạn khỏi mảng friendRequest của người gửi
+    sender.friendRequest = sender.friendRequest.filter(
+      (requestId) => requestId.toString() !== id_receiver
+    );
+
+    // Loại bỏ yêu cầu kết bạn khỏi mảng friendReceived của người nhận
+    receiver.friendReceived = receiver.friendReceived.filter(
+      (requestId) => requestId.toString() !== id_sender
+    );
+
+    // Lưu các thay đổi vào cơ sở dữ liệu
+    await sender.save();
+    await receiver.save();
+
+    // Trả về phản hồi thành công
+    res.status(200).json({ sender, receiver });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+const acceptFriendRequest = async (req, res) => {
+  const { id_sender, id_receiver } = req.body;
+  try {
+    const sender = await User.findById(id_sender);
+    const receiver = await User.findById(id_receiver);
+    if (!sender || !receiver) {
+      return res.status(400).json({ error: " sender null or receiver null" });
+    }
+    sender.friends.push(id_receiver);
+    await sender.save();
+
+    // Thêm id_sender vào mảng friendRequest của người nhận
+    receiver.friends.push(id_sender);
+    await receiver.save();
+    // Gọi lại xóa yêu cầu kết bạn
+    await deleteFriendRequest(req, res);
+    console.log("Gửi yêu cầu kết bạn thành công");
+    res.status(200).json({ sender, receiver });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
@@ -139,8 +236,8 @@ const deleteUser = async (req, res) => {
 };
 const getUserByID = async (req, res) => {
   try {
-    const user = await User.findById(req.body.id);
-    res.status(200).json("Delete successfully");
+    const user = await User.findById(req.params.id);
+    res.status(200).json(user);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -250,10 +347,13 @@ const forgotPassword = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 module.exports = {
   login,
   signup,
+  getUserByID,
   getfriend,
+  getfriendRequest,
   getPhoneBook,
   getAllUser,
   deleteUser,
@@ -261,4 +361,7 @@ module.exports = {
   updateMK,
   postUserByUserName,
   forgotPassword,
+  addFriendRequest,
+  deleteFriendRequest,
+  acceptFriendRequest,
 };
