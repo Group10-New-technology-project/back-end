@@ -40,5 +40,8 @@ router.post("/deleteFriendRequest", userController.deleteFriendRequest);
 // accept friend request
 //http://192.168.0.201:3000/api/v1/users/acceptFriendRequest
 router.post("/acceptFriendRequest", userController.acceptFriendRequest);
+// delete friends
+//http://192.168.0.201:3000/api/v1/users/deleteFriends
+router.post("/deleteFriends", userController.deleteFriends);
 //-----------------------------------------------------------
 module.exports = router;

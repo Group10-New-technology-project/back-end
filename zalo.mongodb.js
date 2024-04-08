@@ -14,8 +14,8 @@
 // phoneBook : Object[] // mảng các số điện thoại trong danh bạ
 // isdelete
 // friends : Object[] // mảng các id bạn bè
-// friendrequest : Object[] // mảng các id bạn bè đã gửi lời mời kết bạn
-
+// friendrequest : Object[] // mảng các id người đã gửi lời mời kết bạn
+// friendReceived : Object[] // mảng các id nhận lời mời kết bạn từ người khác
 // bảng tên phonebook
 // có các trường sau
 // _id
@@ -159,8 +159,7 @@ db.users.insertMany([
     isDelete: false,
     friends: [ObjectId("60aae4843ae33121e0de8507"), ObjectId("60aae4843ae33121e0de4368")],
     friendRequest: [],
-    friendReceived:[]
-
+    friendReceived: [],
   },
   {
     _id: ObjectId("60aae4843ae33121e0de8507"),
@@ -177,8 +176,7 @@ db.users.insertMany([
     isDelete: false,
     friends: [ObjectId("60aae4843ae33121e0de8506")],
     friendRequest: [],
-    friendReceived:[]
-    
+    friendReceived: [],
   },
   {
     _id: ObjectId("60aae4843ae33121e0de4368"),
@@ -195,8 +193,7 @@ db.users.insertMany([
     isDelete: false,
     friends: [ObjectId("60aae4843ae33121e0de8506")],
     friendRequest: [],
-    friendReceived:[]
-
+    friendReceived: [],
   },
 ]);
 
