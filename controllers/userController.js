@@ -213,23 +213,28 @@ const deleteFriendRequest = async (req, res) => {
     // Tìm người gửi và người nhận dựa trên id_sender và id_receiver
     const sender = await User.findById(id_sender);
     const receiver = await User.findById(id_receiver);
+
     // Kiểm tra xem người gửi và người nhận có tồn tại không
     if (!sender || !receiver) {
       return res.status(400).json({ error: "Sender or receiver not found" });
     }
+
     // Loại bỏ yêu cầu kết bạn từ mảng friendRequest của người gửi
     sender.friendRequest = sender.friendRequest.filter(
       (request) => request._id.toString() !== id_receiver
     );
+
     // Loại bỏ yêu cầu kết bạn từ mảng friendReceived của người nhận
     receiver.friendReceived = receiver.friendReceived.filter(
       (received) => received._id.toString() !== id_sender
     );
+
     // Lưu các thay đổi vào cơ sở dữ liệu
     await sender.save();
     await receiver.save();
-    console.log("Xóa yêu cầu kết bạn thành công");
-    // Không cần gửi phản hồi từ đây
+
+    // Trả về phản hồi thành công
+    res.status(200).json({ sender, receiver });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
@@ -244,6 +249,15 @@ const acceptFriendRequest = async (req, res) => {
     if (!sender || !receiver) {
       return res.status(400).json({ error: " sender null or receiver null" });
     }
+    // Loại bỏ yêu cầu kết bạn từ mảng friendRequest của người gửi
+    sender.friendRequest = sender.friendRequest.filter(
+      (request) => request._id.toString() !== id_receiver
+    );
+    // Loại bỏ yêu cầu kết bạn từ mảng friendReceived của người nhận
+    receiver.friendReceived = receiver.friendReceived.filter(
+      (received) => received._id.toString() !== id_sender
+    );
+
     // Thêm id_receiver vào mảng friends của sender
     sender.friends.addToSet(id_receiver);
     await sender.save();
@@ -254,8 +268,6 @@ const acceptFriendRequest = async (req, res) => {
     res.status(200).json({ sender, receiver });
     console.log("Chấp nhận yêu cầu kết bạn thành công");
     // Gọi hàm xóa yêu cầu kết bạn
-
-    deleteFriendRequest(req, res);
   } catch (error) {
     console.error(error);
     console.log("Thất bại");
