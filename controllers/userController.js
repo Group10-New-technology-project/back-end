@@ -151,6 +151,24 @@ const getfriendRequest = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+const getfriendRecived = async (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+  try {
+    const user = await User.findById(id);
+    console.log(user);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const friendIds = user.friendReceived;
+    // const friends = await User.find({ _id: { $in: friendIds } });
+    res.status(200).json(friendIds);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 const addFriendRequest = async (req, res) => {
   const { id_sender, id_receiver } = req.body;
   try {
@@ -384,6 +402,7 @@ module.exports = {
   getUserByID,
   getfriend,
   getfriendRequest,
+  getfriendRecived,
   getPhoneBook,
   getAllUser,
   deleteUser,

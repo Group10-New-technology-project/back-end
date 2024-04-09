@@ -32,6 +32,9 @@ router.post("/forgot-password", userController.forgotPassword);
 // get friend request
 // http://localhost:3000/api/v1/users/getfriendRequest/60aae4843ae33121e0de8506
 router.get("/getfriendRequest/:id", userController.getfriendRequest);
+// get friend recive
+// http://localhost:3000/api/v1/users/getfriendRecived/60aae4843ae33121e0de8506
+router.get("/getfriendRecived/:id", userController.getfriendRecived);
 // add friend request
 router.post("/addFriendRequest", userController.addFriendRequest);
 // delete friend request
