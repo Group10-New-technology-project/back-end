@@ -1,6 +1,19 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-
+const friendRequestSchema = new Schema({
+  _id: {
+    type: Schema.Types.ObjectId,
+    ref: "User", // Tham chiếu tới collection 'User đã gửi' (chính collection hiện tại)
+  },
+  date: {
+    type: Date,
+    required: false,
+  },
+  content: {
+    type: String,
+    required: false,
+  },
+});
 const userSchema = new Schema(
   {
     avatar: {
@@ -56,18 +69,8 @@ const userSchema = new Schema(
         ref: "User", // Tham chiếu tới collection 'User' (chính collection hiện tại)
       },
     ],
-    friendRequest: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User", // Tham chiếu tới collection 'User đã gửi' (chính collection hiện tại)
-      },
-    ],
-    friendReceived: [
-      {
-        type: Schema.Types.ObjectId,
-        ref: "User", // Tham chiếu tới collection 'User đã nhận' (chính collection hiện tại)
-      },
-    ],
+    friendRequest: [friendRequestSchema],
+    friendReceived: [friendRequestSchema],
   },
   { timestamps: true }
 );
