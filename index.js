@@ -1,14 +1,15 @@
+require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
-require("dotenv").config();
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
+const { getIPv4Address } = require("./config/ipConfig");
 const app = express();
-const ip = process.env.IP;
 const port = process.env.PORT;
-
+const ip = getIPv4Address();
 process.env.AWS_SDK_SUPPRESS_MAINTENANCE_MODE_MESSAGE = "1";
+
 // routes
 const userRoute = require("./routes/userRoute");
 const conversationRoute = require("./routes/conversationRoute");
