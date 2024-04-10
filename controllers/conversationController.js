@@ -2,6 +2,7 @@ const Member = require("../models/Member");
 const Message = require("../models/Message");
 const Conversation = require("../models/Conversation");
 const Members = require("../models/Member");
+
 const getConversations = async (req, res) => {
   try {
     const conversations = await Conversation.find()
@@ -24,14 +25,28 @@ const getConversations = async (req, res) => {
 const getConversationById = async (req, res) => {
   const id = req.params.id;
   try {
-    const conversation = await Conversation.findById(id).populate("members").populate("messages");
+    const conversation = await Conversation.findById(id)
+      .populate({
+        path: "members",
+        populate: {
+          path: "userId",
+          model: "User", // Tên của model người dùng trong Mongoose
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "memberId",
+          model: "Member", // Tên của model người dùng trong Mongoose
+        },
+      });
     if (!conversation) {
-      return res.status(404).json({ error: "Conversation not found" });
+      return res.status(404).json([]);
     }
     res.status(200).json(conversation);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json([]);
   }
 };
 
@@ -59,7 +74,7 @@ const getConversationByUserId = async (req, res) => {
     }
 
     const memberId = members[0]._id;
-    console.log("menid da lay", memberId);
+
     const conversations = await Conversation.find({
       members: memberId,
     })
@@ -78,12 +93,12 @@ const getConversationByUserId = async (req, res) => {
         },
       });
     if (!conversations) {
-      return res.status(404).json({ message: "Conversation not found" });
+      return res.status(404).json([]);
     }
     res.status(200).json(conversations);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json([]);
   }
 };
 const seachConversation = async (req, res) => {

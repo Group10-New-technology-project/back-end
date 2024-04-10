@@ -8,7 +8,7 @@ const middlewareController = require("../middleware/middlewareController");
 // http://localhost:3000/api/v1/conversation/getConversationById/60aae4843ae33121e0de0000
 router.get(
   "/getConversationById/:id",
-  middlewareController.verifyToken,
+  // middlewareController.verifyToken,
   conversationController.getConversationById
 );
 

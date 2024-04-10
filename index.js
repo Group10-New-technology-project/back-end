@@ -5,7 +5,11 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 const { getIPv4Address } = require("./config/ipConfig");
+const http = require("http");
+
 const app = express();
+
+const server = http.createServer(app);
 const port = process.env.PORT;
 const ip = getIPv4Address();
 process.env.AWS_SDK_SUPPRESS_MAINTENANCE_MODE_MESSAGE = "1";
@@ -16,6 +20,11 @@ const conversationRoute = require("./routes/conversationRoute");
 const postRoute = require("./routes/postRoute");
 const authRoute = require("./routes/authRoute");
 const postMessageRoute = require("./routes/messageRoute");
+
+//socketio
+const initializeSocketServer = require("./socketio/server");
+initializeSocketServer(server);
+
 // middleware
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
@@ -42,9 +51,9 @@ app.use(function (req, res) {
   res.status(404).send("Not found");
 });
 
-// app.listen(3000, () => {
-//   console.log("Server is running on port 3000.");
-// });
+server.listen(3000, () => {
+  console.log("Server is running on port 3000.");
+});
 
 // CHANH
 app.listen(port, ip, () => {
