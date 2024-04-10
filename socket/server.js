@@ -5,8 +5,11 @@ function initializeSocketServer(server) {
     cors: "*",
   });
 
+<<<<<<< HEAD
   const snakes = {};
 
+=======
+>>>>>>> 77add1e6981857561e6d9683dfaded2291843678
   io.on("connection", (socket) => {
     console.log("Có 1 user kết nối có id là: " + socket.id);
 
@@ -35,7 +38,11 @@ function initializeSocketServer(server) {
       console.log("Tin nhắn từ user " + socket.id + ":", message);
       console.log("Phòng gửi đến:", room);
       console.log("Danh sách phòng:", Array.from(socket.rooms));
+<<<<<<< HEAD
       // Gửi tin nhắn đến tất cả các client trong phòng được chỉ đxịnh
+=======
+      // Gửi tin nhắn đến tất cả các client trong phòng được chỉ định
+>>>>>>> 77add1e6981857561e6d9683dfaded2291843678
 
       io.to(room).emit("message", "User " + socket.id + ": " + message);
     });

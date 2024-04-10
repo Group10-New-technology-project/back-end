@@ -1,5 +1,5 @@
 const { Router } = require("express");
-const conversationController = require("../controllers/ConversationController");
+const conversationController = require("../controllers/conversationController");
 
 const router = Router();
 const middlewareController = require("../middleware/middlewareController");
@@ -35,5 +35,13 @@ router.get(
 // tìm kiếm cuộc trò chuyện theo tên
 // http://localhost:3000/api/v1/conversation/seachConversation?searchConversation=3
 router.post("/seachConversation", conversationController.seachConversation);
+
+//API get conversations app
+// http://localhost:3000/api/v1/conversation/getConversationByIdApp/60aae4843ae33121e0de0000
+router.get(
+  "/getConversationByIdApp/:id",
+  // middlewareController.verifyToken,
+  conversationController.getConversationByIdApp
+);
 
 module.exports = router;

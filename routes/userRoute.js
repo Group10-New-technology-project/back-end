@@ -46,5 +46,9 @@ router.post("/acceptFriendRequest", userController.acceptFriendRequest);
 // delete friends
 //http://192.168.0.201:3000/api/v1/users/deleteFriends
 router.post("/deleteFriends", userController.deleteFriends);
+//get  user by username
+// GET http://192.168.0.201:3000/api/v1/users/username/username_example
+router.get("/username/:username", userController.getUserByUserName);
+
 //-----------------------------------------------------------
 module.exports = router;

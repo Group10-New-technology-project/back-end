@@ -11,7 +11,6 @@
 // password
 // isactive
 // isadmin
-// phoneBook : Object[] // mảng các số điện thoại trong danh bạ
 // isdelete
 // friends : Object[] // mảng các id bạn bè
 // friendrequest : Object[] // mảng các id người đã gửi lời mời kết bạn
