@@ -48,6 +48,7 @@ const getConversationByMemberId = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
 const getConversationByUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -55,7 +56,7 @@ const getConversationByUserId = async (req, res) => {
     // Tìm các thành viên có userId trùng khớp
     const members = await Members.find({ userId: userId });
     if (!members || members.length === 0) {
-      return res.status(200).json([]);
+      return res.status(404).json({ message: "Members not found for this user" });
     }
 
     const memberId = members[0]._id;
@@ -100,10 +101,46 @@ const seachConversation = async (req, res) => {
   }
 };
 
+// --------------------Duy----------------------------
+const getConversationByIdApp = async (req, res) => {
+  const id = req.params.id;
+  console.log("id", id);
+  try {
+    const conversation = await Conversation.findById(id)
+      .populate({
+        path: "members",
+        populate: {
+          path: "userId",
+          model: "User", // Tên của model người dùng trong Mongoose
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "memberId",
+          model: "Member", // Tên của model người dùng trong Mongoose
+          populate: {
+            path: "userId",
+            model: "User",
+            select: "avatar",
+          },
+        },
+      });
+    if (!conversation) {
+      return res.status(404).json({ error: "Conversation not found" });
+    }
+    res.status(200).json(conversation);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 module.exports = {
   getConversations,
   getConversationById,
   getConversationByMemberId,
   seachConversation,
   getConversationByUserId,
+  getConversationByIdApp,
 };
