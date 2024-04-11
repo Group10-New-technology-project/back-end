@@ -1,53 +1,83 @@
 const fs = require("fs");
 const socketIo = require("socket.io");
+
 function initializeSocketServer(server) {
   const io = socketIo(server, {
     cors: "*",
   });
 
-  const snakes = {};
+  let listUserInRoom = [];
+  let activeUsers = [];
 
   io.on("connection", (socket) => {
-    console.log("Có 1 user kết nối có id là: " + socket.id);
+    console.log(`User connected with id: ${socket.id}`);
 
-    // Gửi tin nhắn chào mừng khi một người dùng kết nối
-    socket.emit("message", "Chào mừng bạn đến với chat!");
-
-    // Lắng nghe sự kiện 'joinRoom' từ client để tham gia phòng
-    socket.on("joinRoom", ({ roomId, userId }) => {
-      socket.join(roomId);
-      console.log("rocketid", socket.id);
-      io.to(roomId).emit("message", `User ${userId} vừa tham gia phòng ${roomId}`);
+    // Xử lý khi một người dùng kết nối mới
+    socket.on("new-user-add", (newUserId) => {
+      if (!activeUsers.some((user) => user.userId === newUserId)) {
+        activeUsers.push({ userId: newUserId, socketId: socket.id });
+        console.log("New User Connected", activeUsers);
+      }
+      io.emit("get-users", activeUsers);
     });
 
-    // Lắng nghe sự kiện 'message' từ client
+    // Xử lý khi một người dùng tham gia phòng
+    socket.on("joinRoom", ({ roomId, userId }) => {
+      const existingUser = listUserInRoom.find((user) => user.socketId === socket.id);
+
+      if (existingUser) {
+        if (existingUser.roomId !== roomId) {
+          // Người dùng rời khỏi phòng hiện tại nếu roomId đã thay đổi
+          const disconnectedUserId = existingUser.userId;
+          const disconnectedRoomId = existingUser.roomId;
+
+          listUserInRoom = listUserInRoom.filter((user) => user.socketId !== socket.id);
+          socket.leave(disconnectedRoomId);
+
+          console.log(`User ${disconnectedUserId} left room ${disconnectedRoomId}`);
+          console.log("Updated listUserInRoom after user left:", listUserInRoom);
+
+          io.to(disconnectedRoomId).emit(
+            "message",
+            `User ${disconnectedUserId} left room ${disconnectedRoomId}`
+          );
+
+          const remainingUsersInRoom = listUserInRoom.filter(
+            (user) => user.roomId === disconnectedRoomId
+          );
+          io.to(disconnectedRoomId).emit("usersInRoom", remainingUsersInRoom);
+        } else {
+          // Người dùng đã tồn tại trong phòng mới
+          return;
+        }
+      }
+
+      // Thêm người dùng vào phòng mới
+      listUserInRoom.push({ socketId: socket.id, roomId, userId });
+      socket.join(roomId);
+
+      console.log(`User ${userId} joined room ${roomId}`);
+      console.log("Updated listUserInRoom after user joined:", listUserInRoom);
+
+      io.to(roomId).emit("message", `User ${userId} joined room ${roomId}`);
+      const usersInRoom = listUserInRoom.filter((user) => user.roomId === roomId);
+      io.to(roomId).emit("usersInRoom", usersInRoom);
+    });
+
+    // Xử lý khi một người dùng gửi tin nhắn
     socket.on("message", (data) => {
       const { message, room } = data;
       console.log("Tin nhắn từ user " + socket.id + ":", message);
       console.log("Phòng gửi đến:", room);
-      console.log("Danh sách phòng:", Array.from(socket.rooms));
-      // Gửi tin nhắn đến tất cả các client trong phòng được chỉ định
       io.to(room).emit("message", "User " + socket.id + ": " + message);
     });
 
-    socket.on("rooms", () => {
-      updateRoomList();
-    });
-    // socket.on("file", (data) => {
-    //   try {
-    //     const { fileName, fileData, room } = data;
-    //     const fileBuffer = Buffer.from(fileData.split(";base64,").pop(), "base64");
-
-    //     // Gửi tệp tin trực tiếp cho người dùng
-    //     io.to(room).emit("fileResponse", { fileName: fileName, fileData: fileData });
-    //   } catch (error) {
-    //     console.log(error);
-    //   }
-    // });
-
+    // Xử lý khi một người dùng ngắt kết nối
     socket.on("disconnect", () => {
-      console.log("User disconnected: " + socket.id);
       io.emit("message", "User " + socket.id + " đã rời khỏi cuộc trò chuyện.");
+      activeUsers = activeUsers.filter((user) => user.socketId !== socket.id);
+      console.log("User Disconnected", activeUsers);
+      io.emit("get-users", activeUsers);
     });
   });
 }
