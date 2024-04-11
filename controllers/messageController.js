@@ -2,20 +2,40 @@ const Message = require("../models/Message");
 const Conversation = require("../models/Conversation");
 const multer = require("multer");
 const AWS = require("aws-sdk");
-// Cấu hình AWS
+const mongoose = require("mongoose");
+const ObjectId = mongoose.Types.ObjectId;
 AWS.config.update({
+  region: process.env.REGION,
   accessKeyId: process.env.ACCESS_KEY_ID,
   secretAccessKey: process.env.SECRET_ACCESS_KEY,
 });
+
+// Create S3 instance
 const s3 = new AWS.S3();
 
-// Cấu hình multer để xử lý tải lên ảnh
+// Configure multer for image upload
+const storage = multer.memoryStorage();
 const upload = multer({
-  storage: multer.memoryStorage(),
+  storage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // Giới hạn kích thước file 5MB
+    fileSize: 2000000, // Adjust file size limit as needed
+  },
+  fileFilter(req, file, cb) {
+    checkFileType(file, cb);
   },
 });
+
+// Function to check file type
+function checkFileType(file, cb) {
+  const filetypes = /jpeg|jpg|png|gif/;
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+  const mimetype = filetypes.test(file.mimetype);
+  if (mimetype && extname) {
+    return cb(null, true);
+  } else {
+    cb("Error: Images Only!");
+  }
+}
 
 const postMessageWeb = async (req, res) => {
   const { conversationId, content, memberId, type } = req.body; // Lấy thông tin tin nhắn từ request body
@@ -70,73 +90,6 @@ const postMessageWeb = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-
-// const postMessage = async (req, res) => {
-//   const { conversationId, memberId, content, type } = req.body; // Lấy thông tin tin nhắn từ request body
-//   const createAt = new Date(); // Lấy thời gian hiện tại
-
-//   try {
-//     // Tạo một tin nhắn mới
-//     const message = new Message({
-//       content,
-//       memberId,
-//       type,
-//       createAt, // Thêm thời gian tạo vào tin nhắn
-//     });
-
-//     // Nếu loại tin nhắn là text, không cần tải ảnh lên S3
-//     if (type !== "text" && req.file) {
-//       const { originalname, buffer, mimetype } = req.file;
-
-//       // Tải lên ảnh lên Amazon S3
-//       const params = {
-//         Bucket: process.env.S3_BUCKET_NAME,
-//         Key: `${username}_${Date.now()}_${originalname}`,
-//         Body: buffer,
-//         ContentType: mimetype,
-//       };
-//       await s3.upload(params).promise();
-//     }
-
-//     // Lưu tin nhắn vào cơ sở dữ liệu
-//     const newMessage = await message.save();
-
-//     // Tìm cuộc trò chuyện hoặc nhóm tương ứng
-//     const conversation = await Conversation.findById(conversationId);
-//     if (!conversation) {
-//       return res.status(404).json({ error: "Conversation not found" });
-//     }
-
-//     // Thêm tin nhắn vào cuộc trò chuyện hoặc nhóm
-//     conversation.messages.push(newMessage._id);
-//     await conversation.save();
-
-//     const conversation2 = await Conversation.findById(conversationId)
-//       .populate({
-//         path: "members",
-//         populate: {
-//           path: "userId",
-//           model: "User", // Tên của model người dùng trong Mongoose
-//         },
-//       })
-//       .populate({
-//         path: "messages",
-//         populate: {
-//           path: "memberId",
-//           model: "Member", // Tên của model người dùng trong Mongoose
-//         },
-//       });
-//     if (!conversation2) {
-//       return res.status(404).json({ error: "Conversation not found" });
-//     }
-
-//     // Trả về tin nhắn mới được tạo
-//     res.status(201).json(conversation2);
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Server error" });
-//   }
-// };
 
 const getMessagesByConversationId = async (req, res) => {
   const conversationId = req.params.conversationId;
@@ -196,8 +149,214 @@ const postMessage = async (req, res) => {
   }
 };
 
+const uploadImageToS3 = async (req, res) => {
+  try {
+    const { originalname, buffer, mimetype } = req.file;
+
+    // Specify key and parameters for S3 upload
+    const params = {
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: `${Date.now()}_${originalname}`,
+      Body: buffer,
+      ContentType: mimetype,
+    };
+
+    // Upload image to S3
+    s3.upload(params, (err, data) => {
+      if (err) {
+        console.error("Error uploading image to S3:", err);
+        return res.status(500).json({ error: "Internal Server Error" });
+      } else {
+        // Image upload successful, return S3 URL
+        return res.json({ imageUrl: data.Location });
+      }
+    });
+  } catch (error) {
+    console.error("Error handling image upload:", error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+const deleteMessage = async (req, res) => {
+  try {
+    const { conversationId, messageId, memberId } = req.body;
+
+    // Kiểm tra xem conversationId, messageId và memberId có tồn tại trong request body hay không
+    if (!conversationId || !messageId || !memberId) {
+      return res
+        .status(400)
+        .json({ error: "Thiếu thông tin cần thiết hoặc memberId không hợp lệ" });
+    }
+
+    // Tìm cuộc trò chuyện dựa trên conversationId
+    const conversation = await Conversation.findById(conversationId)
+      .populate({
+        path: "members",
+        populate: {
+          path: "userId",
+          model: "User", // Tên của model người dùng trong Mongoose
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "memberId",
+          model: "Member", // Tên của model người dùng trong Mongoose
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "deleteMember",
+          model: "Member", // Tên của model người dùng trong Mongoose
+        },
+      });
+
+    if (!conversation) {
+      return res.status(404).json({ error: "Cuộc trò chuyện không tồn tại" });
+    }
+
+    // Tìm tin nhắn đã xóa bằng ID của nó
+    const deleteMessage = await Message.findById(messageId).populate({
+      path: "memberId",
+      model: "Member", // Tên của model người dùng trong Mongoose
+    });
+
+    const deleteMember = {
+      _id: memberId,
+    };
+
+    console.log("deleteMember", deleteMember);
+    deleteMessage.deleteMember.push(deleteMember);
+
+    console.log("deleteMessage", deleteMessage);
+
+    await deleteMessage.save();
+
+    const updatedConversation = await Conversation.findById(conversationId)
+      .populate({
+        path: "members",
+        populate: {
+          path: "userId",
+          model: "User", // Tên của model người dùng trong Mongoose
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "memberId",
+          model: "Member", // Tên của model người dùng trong Mongoose
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "deleteMember",
+          model: "Member", // Tên của model người dùng trong Mongoose
+        },
+      });
+
+    // Lưu lại cuộc trò chuyện
+    await updatedConversation.save();
+
+    res.json(updatedConversation);
+
+    console.log("conversation", updatedConversation);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Lỗi khi xóa tin nhắn" });
+  }
+};
+
+const thuHoiMessage = async (req, res) => {
+  try {
+    const { conversationId, messageId, memberId } = req.body;
+
+    // Kiểm tra xem conversationId, messageId và memberId có tồn tại trong request body hay không
+    if (!conversationId || !messageId || !memberId) {
+      return res
+        .status(400)
+        .json({ error: "Thiếu thông tin cần thiết hoặc memberId không hợp lệ" });
+    }
+
+    // Tìm cuộc trò chuyện dựa trên conversationId
+    const conversation = await Conversation.findById(conversationId)
+      .populate({
+        path: "members",
+        populate: {
+          path: "userId",
+          model: "User", // Tên của model người dùng trong Mongoose
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "memberId",
+          model: "Member", // Tên của model người dùng trong Mongoose
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "deleteMember",
+          model: "Member", // Tên của model người dùng trong Mongoose
+        },
+      });
+
+    if (!conversation) {
+      return res.status(404).json({ error: "Cuộc trò chuyện không tồn tại" });
+    }
+
+    // Tìm tin nhắn đã xóa bằng ID của nó
+    const deleteMessage = await Message.findById(messageId).populate({
+      path: "memberId",
+      model: "Member", // Tên của model người dùng trong Mongoose
+    });
+
+    deleteMessage.recallMessage = true;
+
+    await deleteMessage.save();
+
+    const updatedConversation = await Conversation.findById(conversationId)
+      .populate({
+        path: "members",
+        populate: {
+          path: "userId",
+          model: "User", // Tên của model người dùng trong Mongoose
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "memberId",
+          model: "Member", // Tên của model người dùng trong Mongoose
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "deleteMember",
+          model: "Member", // Tên của model người dùng trong Mongoose
+        },
+      });
+
+    // Lưu lại cuộc trò chuyện
+    await updatedConversation.save();
+
+    res.json(updatedConversation);
+
+    console.log("conversation", updatedConversation);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Lỗi khi xóa tin nhắn" });
+  }
+};
+
 module.exports = {
   postMessage,
   getMessagesByConversationId,
   postMessageWeb,
+  uploadImageToS3,
+  deleteMessage,
+  thuHoiMessage,
 };

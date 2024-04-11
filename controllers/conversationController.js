@@ -39,6 +39,13 @@ const getConversationById = async (req, res) => {
           path: "memberId",
           model: "Member", // Tên của model người dùng trong Mongoose
         },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "deleteMember",
+          model: "Member", // Tên của model người dùng trong Mongoose
+        },
       });
     if (!conversation) {
       return res.status(404).json([]);
