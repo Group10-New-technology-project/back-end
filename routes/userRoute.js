@@ -49,6 +49,11 @@ router.post("/deleteFriends", userController.deleteFriends);
 //get  user by username
 // GET http://192.168.0.201:3000/api/v1/users/username/username_example
 router.get("/username/:username", userController.getUserByUserName);
+// http://localhost:3000/api/v1/users/getfriendRequest/60aae4843ae33121e0de8506
+router.get("/getfriendRequestWeb/:id", userController.getfriendRequestWeb);
+// get friend recive web
+// http://localhost:3000/api/v1/users/getfriendRecived/60aae4843ae33121e0de8506
+router.get("/getfriendRecivedWeb/:id", userController.getfriendRecivedWeb);
 
 //-----------------------------------------------------------
 module.exports = router;

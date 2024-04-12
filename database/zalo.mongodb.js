@@ -1,5 +1,6 @@
-// tạo 1 dbs tên là zalo
+// DATABASE ZALO CHAT MONGODB
 
+<<<<<<< Updated upstream:zalo.mongodb.js
 // có bảng tên là users
 // có các trường sau
 // _id
@@ -21,73 +22,82 @@
 // name
 // phone
 // updateat
+=======
+// BẢNG USERS
+// _id: ObjectId, // ID duy nhất của người dùng
+// avatar: String, // Đường dẫn đến hình đại diện của người dùng
+// coverAvatar: String, // Đường dẫn đến ảnh bìa của hồ sơ của người dùng
+// dateOfBirth: Date, // Ngày sinh của người dùng
+// gender: String, // Giới tính của người dùng (Male, Female, Other)
+// username: String, // Tên người dùng (số điện thoại)
+// password: String, // Mật khẩu người dùng (cần được mã hóa)
+// isActive: Boolean, // Trạng thái hoạt động của tài khoản
+// isAdmin: Boolean, // Trạng thái quản trị viên của người dùng
+// isDelete: Boolean, // Cho biết liệu người dùng đã bị xóa hay không
+// friends: [ObjectId], // Mảng các ID của bạn bè của người dùng
+// friendRequests: [ObjectId], // Mảng các ID của người đã gửi lời mời kết bạn
+// friendReceived: [ObjectId]; // Mảng các ID của người nhận lời mời kết bạn từ người khác
+>>>>>>> Stashed changes:database/zalo.mongodb.js
 
-// banng tên coversation
-// có các trường sau
-// _id
-// name
-// type
-// members : Object[] // mảng các id thành viên
-// pinMessage : Object[] // mảng các id tin nhắn đã pin
-// lastMessage
-// learder  // id người tạo nhóm
-// createAt
-// isjoinfromlink // có tham gia từ link không
+// BẢNG COVERSATION
+// _id: ObjectId, // ID duy nhất của cuộc trò chuyện
+// name: String, // Tên của cuộc trò chuyện
+// type: String, // Loại của cuộc trò chuyện (ví dụ: nhóm, cá nhân, ...)
+// members: [ObjectId], // Mảng các ID của các thành viên trong cuộc trò chuyện
+// pinMessage: [ObjectId], // Mảng các ID của các tin nhắn được ghim trong cuộc trò chuyện
+// lastMessage: ObjectId, // ID của tin nhắn cuối cùng trong cuộc trò chuyện
+// leader: ObjectId, // ID của người tạo cuộc trò chuyện
+// createdAt: Date, // Thời điểm cuộc trò chuyện được tạo
+// isJoinFromLink: Boolean // Cho biết liệu có tham gia cuộc trò chuyện từ một liên kết không
 
-// bảng tên member
-// có các trường sau
-// _id
-// userId
-// isNotify // có thông báo không
-// lastSeen // thời gian cuối cùng xem tin nhắn
+// BẢNG TÊN MEMBER
+// _id: ObjectId, // ID duy nhất của thành viên
+// userId: ObjectId, // ID của người dùng
+// isNotify: Boolean, // Cho biết liệu thành viên có thông báo không
+// lastSeen: Date // Thời điểm cuối cùng mà thành viên xem tin nhắn
 
-// bảng tên message
-// có các trường sau
-// _id
-// conversationId
-// content
-// memberId
-// type
-// createAt
-// deleteMember : Object[] // mảng các id thành viên đã xóa tin nhắn
-// recallMessage // id tin nhắn thu hồi
-// reaction : Object[] // mảng các id người dùng đã phản ứng
-// tag : Object[] // mảng các id người dùng đã tag
+// BẢNG TÊN MESSAGE
+// _id: ObjectId, // ID duy nhất của tin nhắn
+// conversationId: ObjectId, // ID của cuộc trò chuyện mà tin nhắn thuộc về
+// content: String, // Nội dung của tin nhắn
+// memberId: ObjectId, // ID của thành viên gửi tin nhắn
+// type: String, // Loại của tin nhắn (ví dụ: text, hình ảnh, video, ...)
+// createdAt: Date, // Thời điểm tạo tin nhắn
+// deleteMembers: [ObjectId], // Mảng các ID của thành viên đã xóa tin nhắn
+// recallMessage: ObjectId, // ID của tin nhắn được thu hồi (nếu có)
+// reactions: [ObjectId], // Mảng các ID của người dùng đã phản ứng
+// tags: [ObjectId] // Mảng các ID của người dùng đã được tag trong tin nhắn
 
-// bảng tên reaction
-// có các trường sau
-// _id
-// typeReaction // loại phản ứng
-// status // trạng thái phản ứng
-// quantity // số lượng phản ứng
+// BẢNG TÊN REACTION
+// _id: ObjectId, // ID duy nhất của phản ứng
+// status: String, // Trạng thái của phản ứng (ví dụ: active, inactive)
+// typeReaction: String, // Loại của phản ứng (ví dụ: like, love, haha, wow, sad, angry, ...)
+// quantity: Number // Số lượng của phản ứng
 
-// bảng tên post
-// có các trường sau
-// _id
-// title
-// post_at // thời gian đăng
-// content // nội dung
-// image // ảnh
-// user_id // id người đăng
-// categories // danh mục
-// isProject // có phải dự án không
-// isDelete // đã xóa chưa
-// isPublic // công khai không
-// like // số lượt like
+// BẢNG TÊN POST
+// _id: ObjectId, // ID duy nhất của bài viết
+// title: String, // Tiêu đề của bài viết
+// post_at: Date, // Thời gian đăng bài
+// content: String, // Nội dung của bài viết
+// image: String, // Đường dẫn đến hình ảnh của bài viết (nếu có)
+// user_id: ObjectId, // ID của người đăng bài
+// categories: [String], // Mảng các danh mục của bài viết
+// isProject: Boolean, // Cho biết liệu bài viết có phải là dự án không
+// isDelete: Boolean, // Cho biết liệu bài viết đã bị xóa chưa
+// isPublic: Boolean, // Cho biết liệu bài viết có công khai không
+// like: Number // Số lượt thích của bài viết
 
-// bảng tên comment
-// có các trường sau
-// _id
-// post_id // id bài viết
-// user_id // id người dùng
-// content // nội dung
-// createAt // thời gian tạo
-// isDelete // đã xóa chưa
-// like // số lượt like
-// reply // mảng các id reply
+// BẢNG TÊN COMMENTS
+// _id: ObjectId, // ID duy nhất của bình luận
+// post_id: ObjectId, // ID của bài viết mà bình luận thuộc về
+// user_id: ObjectId, // ID của người dùng đã bình luận
+// content: String, // Nội dung của bình luận
+// createdAt: Date, // Thời gian tạo bình luận
+// isDelete: Boolean, // Cho biết liệu bình luận đã bị xóa chưa
+// like: Number, // Số lượt thích của bình luận
+// reply: [ObjectId] // Mảng các ID của câu trả lời cho bình luận này
 
 use("zalo");
-
 // Tạo bảng users
 db.createCollection("users");
 // Tạo bảng phonebook
@@ -156,7 +166,7 @@ db.users.insertMany([
       ObjectId("60aae4843ae33121e0de8503"),
     ],
     isDelete: false,
-    friends: [ObjectId("60aae4843ae33121e0de8507"), ObjectId("60aae4843ae33121e0de4368")],
+    friends: [],
     friendRequest: [],
     friendReceived: [],
   },

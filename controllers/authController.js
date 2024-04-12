@@ -1,8 +1,24 @@
 const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
 let refreshTokens = [];
+const Member = require("../models/Member");
+
+const createMember = async (userId) => {
+  try {
+    const member = new Member({
+      userId,
+      isNotify: true,
+      lastSeen: new Date(),
+    });
+
+    await member.save();
+    console.log("Member created successfully");
+  } catch (error) {
+    console.error("Error creating member:", error);
+    throw error; // Ném lỗi để bắt ở nơi gọi
+  }
+};
 
 const authController = {
   //signup
@@ -18,10 +34,10 @@ const authController = {
       const newUser = new User({
         username: username,
         password: hashedPassword,
-        avatar: "",
-        coveravatar: "",
+        avatar: "https://image666666.s3.ap-southeast-1.amazonaws.com/no-image.png",
+        coveravatar: "https://image666666.s3.ap-southeast-1.amazonaws.com/no-image.png",
         dateofbirth: "",
-        gender: "",
+        gender: "male",
         name: name,
         phoneBook: [],
         friends: [],
@@ -31,11 +47,10 @@ const authController = {
         isDelete: false,
       });
       const user = await newUser.save();
-
+      await createMember(user._id);
       const accessToken = authController.generateAccessToken(user);
       //Generate refresh token
       const refreshToken = authController.generateRefreshToken(user);
-
       res.cookie("refreshToken", refreshToken, {
         httpOnly: true,
         secure: false,
@@ -44,7 +59,6 @@ const authController = {
       });
       // hidden password
       // const { password, ...others } = existingUser._doc;
-
       res.status(200).json({ user, accessToken, refreshToken });
     } catch (error) {
       console.error(error);

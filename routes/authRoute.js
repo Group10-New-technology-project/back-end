@@ -7,7 +7,6 @@ const router = Router();
 
 //REGISTER
 router.post("/signup", authController.signup);
-
 // REFRESH TOKEN
 router.post("/refresh", authController.requestRefreshToken);
 // //LOG IN

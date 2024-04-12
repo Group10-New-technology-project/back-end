@@ -19,19 +19,6 @@ const upload = multer({
   },
 });
 
-// const login = async (req, res) => {
-//   const { username, password } = req.body;
-//   try {
-//     const user = await User.findOne({ username });
-//     if (!user || user.password !== password) {
-//       return res.status(401).json({ error: "Invalid email or password" });
-//     }
-//     res.status(200).json({ user });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({ error: "Server error" });
-//   }
-// };
 const login = async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -96,7 +83,6 @@ const getfriend = async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
     const friendIds = user.friends;
-    // const friends = await User.find({ _id: { $in: friendIds } });
     res.status(200).json(friendIds);
   } catch (error) {
     console.error(error);
@@ -110,24 +96,100 @@ const deleteFriends = async (req, res) => {
     // Tìm người gửi và người nhận dựa trên id_sender và id_receiver
     const sender = await User.findById(id_sender);
     const receiver = await User.findById(id_receiver);
-
     // Kiểm tra xem người gửi và người nhận có tồn tại không
     if (!sender || !receiver) {
       return res.status(400).json({ error: "Sender or receiver not found" });
     }
-
     // Loại bỏ yêu cầu kết bạn khỏi mảng friendRequest của người gửi
     sender.friends = sender.friends.filter((requestId) => requestId.toString() !== id_receiver);
-
     // Loại bỏ yêu cầu kết bạn khỏi mảng friendReceived của người nhận
     receiver.friends = receiver.friends.filter((requestId) => requestId.toString() !== id_sender);
-
     // Lưu các thay đổi vào cơ sở dữ liệu
     await sender.save();
     await receiver.save();
-
     // Trả về phản hồi thành công
     res.status(200).json({ sender, receiver });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+const getfriendRecivedWeb = async (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+
+  try {
+    const user = await User.findById(id);
+    console.log(user);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    const friendIds = user.friendReceived;
+
+    // Mảng để lưu thông tin của các bạn bè
+    const friendsInfo = [];
+
+    // Duyệt qua mảng friendIds để lấy thông tin của từng bạn bè
+    for (const friend of friendIds) {
+      const friendUser = await User.findById(friend._id);
+
+      if (friendUser) {
+        // Thu thập thông tin của bạn bè
+        const friendInfo = {
+          _id: friend._id,
+          avatar: friendUser.avatar,
+          name: friendUser.name,
+          content: friend.content,
+          date: friend.date,
+        };
+
+        // Thêm thông tin của bạn bè vào mảng friendsInfo
+        friendsInfo.push(friendInfo);
+      }
+    }
+
+    // Trả về danh sách thông tin của các bạn bè
+    res.status(200).json(friendsInfo);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+const getfriendRequestWeb = async (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+
+  try {
+    const user = await User.findById(id);
+    console.log(user);
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    const friendIds = user.friendRequest;
+    // Mảng để lưu thông tin của các bạn bè
+    const friendsInfo = [];
+    // Duyệt qua mảng friendIds để lấy thông tin của từng bạn bè
+    for (const friend of friendIds) {
+      const friendUser = await User.findById(friend._id);
+      if (friendUser) {
+        // Thu thập thông tin của bạn bè
+        const friendInfo = {
+          _id: friend._id,
+          avatar: friendUser.avatar,
+          name: friendUser.name, // Sử dụng friendUser.username thay vì friendUser.name
+          content: friend.content,
+          date: friend.date,
+        };
+
+        // Thêm thông tin của bạn bè vào mảng friendsInfo
+        friendsInfo.push(friendInfo);
+      }
+    }
+    // Trả về danh sách thông tin của các bạn bè
+    res.status(200).json(friendsInfo);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
@@ -150,7 +212,6 @@ const getfriendRecived = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-
 const getfriendRequest = async (req, res) => {
   const id = req.params.id;
   console.log(id);
@@ -220,6 +281,7 @@ const deleteFriendRequest = async (req, res) => {
     }
 
     // Loại bỏ yêu cầu kết bạn từ mảng friendRequest của người gửi
+<<<<<<< Updated upstream
     sender.friendRequest = sender.friendRequest.filter(
       (request) => request._id.toString() !== id_receiver
     );
@@ -228,13 +290,23 @@ const deleteFriendRequest = async (req, res) => {
     receiver.friendReceived = receiver.friendReceived.filter(
       (received) => received._id.toString() !== id_sender
     );
+=======
+    sender.friendRequest = sender.friendRequest.filter((request) => request._id.toString() !== id_receiver);
+
+    // Loại bỏ yêu cầu kết bạn từ mảng friendReceived của người nhận
+    receiver.friendReceived = receiver.friendReceived.filter((received) => received._id.toString() !== id_sender);
+>>>>>>> Stashed changes
 
     // Lưu các thay đổi vào cơ sở dữ liệu
     await sender.save();
     await receiver.save();
 
     // Trả về phản hồi thành công
+<<<<<<< Updated upstream
     res.status(200).json({ sender, receiver });
+=======
+    res.status(200).json("Delete friend request successfully");
+>>>>>>> Stashed changes
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
@@ -250,6 +322,7 @@ const acceptFriendRequest = async (req, res) => {
       return res.status(400).json({ error: " sender null or receiver null" });
     }
     // Loại bỏ yêu cầu kết bạn từ mảng friendRequest của người gửi
+<<<<<<< Updated upstream
     sender.friendRequest = sender.friendRequest.filter(
       (request) => request._id.toString() !== id_receiver
     );
@@ -258,6 +331,11 @@ const acceptFriendRequest = async (req, res) => {
       (received) => received._id.toString() !== id_sender
     );
 
+=======
+    sender.friendRequest = sender.friendRequest.filter((request) => request._id.toString() !== id_receiver);
+    // Loại bỏ yêu cầu kết bạn từ mảng friendReceived của người nhận
+    receiver.friendReceived = receiver.friendReceived.filter((received) => received._id.toString() !== id_sender);
+>>>>>>> Stashed changes
     // Thêm id_receiver vào mảng friends của sender
     sender.friends.addToSet(id_receiver);
     await sender.save();
@@ -265,7 +343,7 @@ const acceptFriendRequest = async (req, res) => {
     receiver.friends.addToSet(id_sender);
     await receiver.save();
     // Gửi phản hồi khi mọi thứ hoàn thành mà không gây ra lỗi
-    res.status(200).json({ sender, receiver });
+    res.status(200).json("Accept friend request successfully");
     console.log("Chấp nhận yêu cầu kết bạn thành công");
     // Gọi hàm xóa yêu cầu kết bạn
   } catch (error) {
@@ -459,4 +537,6 @@ module.exports = {
   deleteFriendRequest,
   acceptFriendRequest,
   deleteFriends,
+  getfriendRequestWeb,
+  getfriendRecivedWeb,
 };

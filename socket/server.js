@@ -24,6 +24,7 @@ function initializeSocketServer(server) {
       io.to(room).emit("message", "User " + socket.id + " vừa tham gia phòng " + room);
     });
 
+<<<<<<< Updated upstream
     socket.on("leaveRoom", (room) => {
       socket.leave(room);
       console.log("User " + socket.id + " vừa thoát phòng " + room);
@@ -31,6 +32,44 @@ function initializeSocketServer(server) {
       io.to(room).emit("message", "User " + socket.id + " vừa thoát phòng " + room);
       //     }
       // });
+=======
+    // Xử lý khi một người dùng tham gia phòng
+    socket.on("joinRoom", ({ roomId, userId }) => {
+      const existingUser = listUserInRoom.find((user) => user.socketId === socket.id);
+
+      if (existingUser) {
+        if (existingUser.roomId !== roomId) {
+          // Người dùng rời khỏi phòng hiện tại nếu roomId đã thay đổi
+          const disconnectedUserId = existingUser.userId;
+          const disconnectedRoomId = existingUser.roomId;
+
+          listUserInRoom = listUserInRoom.filter((user) => user.socketId !== socket.id);
+          socket.leave(disconnectedRoomId);
+
+          console.log(`User ${disconnectedUserId} left room ${disconnectedRoomId}`);
+          console.log("Updated listUserInRoom after user left:", listUserInRoom);
+
+          io.to(disconnectedRoomId).emit("message", `User ${disconnectedUserId} left room ${disconnectedRoomId}`);
+
+          const remainingUsersInRoom = listUserInRoom.filter((user) => user.roomId === disconnectedRoomId);
+          io.to(disconnectedRoomId).emit("usersInRoom", remainingUsersInRoom);
+        } else {
+          // Người dùng đã tồn tại trong phòng mới
+          return;
+        }
+      }
+
+      // Thêm người dùng vào phòng mới
+      listUserInRoom.push({ socketId: socket.id, roomId, userId });
+      socket.join(roomId);
+
+      console.log(`User ${userId} joined room ${roomId}`);
+      console.log("Updated listUserInRoom after user joined:", listUserInRoom);
+
+      io.to(roomId).emit("message", `User ${userId} joined room ${roomId}`);
+      const usersInRoom = listUserInRoom.filter((user) => user.roomId === roomId);
+      io.to(roomId).emit("usersInRoom", usersInRoom);
+>>>>>>> Stashed changes
     });
 
     socket.on("message", (data) => {
