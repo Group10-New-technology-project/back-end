@@ -88,7 +88,7 @@ const authController = {
     );
   },
 
-  //   //LOGIN
+  //LOGIN
   loginUser: async (req, res) => {
     try {
       const user = await User.findOne({ username: req.body.username });

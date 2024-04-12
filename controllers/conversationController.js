@@ -2,10 +2,7 @@ const Member = require("../models/Member");
 const Message = require("../models/Message");
 const Conversation = require("../models/Conversation");
 const Members = require("../models/Member");
-<<<<<<< Updated upstream
-=======
 //1
->>>>>>> Stashed changes
 const getConversations = async (req, res) => {
   try {
     const conversations = await Conversation.find()
@@ -28,9 +25,6 @@ const getConversations = async (req, res) => {
 const getConversationById = async (req, res) => {
   const id = req.params.id;
   try {
-<<<<<<< Updated upstream
-    const conversation = await Conversation.findById(id).populate("members").populate("messages");
-=======
     const conversation = await Conversation.findById(id)
       .populate({
         path: "members",
@@ -53,7 +47,6 @@ const getConversationById = async (req, res) => {
           model: "Member",
         },
       });
->>>>>>> Stashed changes
     if (!conversation) {
       return res.status(404).json({ error: "Conversation not found" });
     }
@@ -233,10 +226,7 @@ module.exports = {
   getConversationByMemberId,
   seachConversation,
   getConversationByUserId,
-<<<<<<< Updated upstream
   getConversationByIdApp,
-=======
   createConversation,
   createConversationWeb,
->>>>>>> Stashed changes
 };

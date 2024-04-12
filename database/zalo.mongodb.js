@@ -1,28 +1,5 @@
 // DATABASE ZALO CHAT MONGODB
 
-<<<<<<< Updated upstream:zalo.mongodb.js
-// có bảng tên là users
-// có các trường sau
-// _id
-// avatar
-// coveravatar
-// dateofbirth
-// gender
-// username
-// password
-// isactive
-// isadmin
-// isdelete
-// friends : Object[] // mảng các id bạn bè
-// friendrequest : Object[] // mảng các id người đã gửi lời mời kết bạn
-// friendReceived : Object[] // mảng các id nhận lời mời kết bạn từ người khác
-// bảng tên phonebook
-// có các trường sau
-// _id
-// name
-// phone
-// updateat
-=======
 // BẢNG USERS
 // _id: ObjectId, // ID duy nhất của người dùng
 // avatar: String, // Đường dẫn đến hình đại diện của người dùng
@@ -37,7 +14,6 @@
 // friends: [ObjectId], // Mảng các ID của bạn bè của người dùng
 // friendRequests: [ObjectId], // Mảng các ID của người đã gửi lời mời kết bạn
 // friendReceived: [ObjectId]; // Mảng các ID của người nhận lời mời kết bạn từ người khác
->>>>>>> Stashed changes:database/zalo.mongodb.js
 
 // BẢNG COVERSATION
 // _id: ObjectId, // ID duy nhất của cuộc trò chuyện
@@ -160,11 +136,7 @@ db.users.insertMany([
     password: "$2b$10$vbUKrFNutR00mYVq3M.2kOS5VTC0rZBdtsyEWAHJSmcydxiAi5L4m",
     isActive: true,
     isAdmin: false,
-    phoneBook: [
-      ObjectId("60aae4843ae33121e0de8501"),
-      ObjectId("60aae4843ae33121e0de8502"),
-      ObjectId("60aae4843ae33121e0de8503"),
-    ],
+    phoneBook: [ObjectId("60aae4843ae33121e0de8501"), ObjectId("60aae4843ae33121e0de8502"), ObjectId("60aae4843ae33121e0de8503")],
     isDelete: false,
     friends: [],
     friendRequest: [],
@@ -357,11 +329,7 @@ db.conversations.insertMany([
     _id: ObjectId("60aae4843ae33121e0de0000"),
     name: "Nhóm 10 Công nghệ mới",
     type: "Group",
-    members: [
-      ObjectId("60aae4843ae33121e0de8501"),
-      ObjectId("60aae4843ae33121e0de1234"),
-      ObjectId("60aae4843ae33121e0de8763"),
-    ],
+    members: [ObjectId("60aae4843ae33121e0de8501"), ObjectId("60aae4843ae33121e0de1234"), ObjectId("60aae4843ae33121e0de8763")],
     messages: [
       ObjectId("60aae4843ae33121e0de1235"),
       ObjectId("60aae4843ae33121e0de5678"),

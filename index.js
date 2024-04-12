@@ -16,19 +16,14 @@ const conversationRoute = require("./routes/conversationRoute");
 const postRoute = require("./routes/postRoute");
 const authRoute = require("./routes/authRoute");
 const postMessageRoute = require("./routes/messageRoute");
-<<<<<<< Updated upstream
-const initializeSocketServer = require("./socket/server.js");
-=======
 const memberRoute = require("./routes/memberRoute");
 const initializeSocketServer = require("./socket/server");
->>>>>>> Stashed changes
 initializeSocketServer(server);
 // middleware
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 app.use(cors());
 app.use(cookieParser());
-// database connection
 
 const dbURI = process.env.MONGODB_URI;
 mongoose

@@ -279,34 +279,19 @@ const deleteFriendRequest = async (req, res) => {
     if (!sender || !receiver) {
       return res.status(400).json({ error: "Sender or receiver not found" });
     }
-
+    s;
     // Loại bỏ yêu cầu kết bạn từ mảng friendRequest của người gửi
-<<<<<<< Updated upstream
-    sender.friendRequest = sender.friendRequest.filter(
-      (request) => request._id.toString() !== id_receiver
-    );
-
-    // Loại bỏ yêu cầu kết bạn từ mảng friendReceived của người nhận
-    receiver.friendReceived = receiver.friendReceived.filter(
-      (received) => received._id.toString() !== id_sender
-    );
-=======
     sender.friendRequest = sender.friendRequest.filter((request) => request._id.toString() !== id_receiver);
 
     // Loại bỏ yêu cầu kết bạn từ mảng friendReceived của người nhận
     receiver.friendReceived = receiver.friendReceived.filter((received) => received._id.toString() !== id_sender);
->>>>>>> Stashed changes
 
     // Lưu các thay đổi vào cơ sở dữ liệu
     await sender.save();
     await receiver.save();
 
     // Trả về phản hồi thành công
-<<<<<<< Updated upstream
-    res.status(200).json({ sender, receiver });
-=======
     res.status(200).json("Delete friend request successfully");
->>>>>>> Stashed changes
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
@@ -322,20 +307,9 @@ const acceptFriendRequest = async (req, res) => {
       return res.status(400).json({ error: " sender null or receiver null" });
     }
     // Loại bỏ yêu cầu kết bạn từ mảng friendRequest của người gửi
-<<<<<<< Updated upstream
-    sender.friendRequest = sender.friendRequest.filter(
-      (request) => request._id.toString() !== id_receiver
-    );
-    // Loại bỏ yêu cầu kết bạn từ mảng friendReceived của người nhận
-    receiver.friendReceived = receiver.friendReceived.filter(
-      (received) => received._id.toString() !== id_sender
-    );
-
-=======
     sender.friendRequest = sender.friendRequest.filter((request) => request._id.toString() !== id_receiver);
     // Loại bỏ yêu cầu kết bạn từ mảng friendReceived của người nhận
     receiver.friendReceived = receiver.friendReceived.filter((received) => received._id.toString() !== id_sender);
->>>>>>> Stashed changes
     // Thêm id_receiver vào mảng friends của sender
     sender.friends.addToSet(id_receiver);
     await sender.save();
