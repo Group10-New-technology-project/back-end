@@ -55,5 +55,4 @@ router.get("/getfriendRequestWeb/:id", userController.getfriendRequestWeb);
 // http://localhost:3000/api/v1/users/getfriendRecived/60aae4843ae33121e0de8506
 router.get("/getfriendRecivedWeb/:id", userController.getfriendRecivedWeb);
 
-//-----------------------------------------------------------
 module.exports = router;

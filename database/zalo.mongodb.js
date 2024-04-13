@@ -136,7 +136,11 @@ db.users.insertMany([
     password: "$2b$10$vbUKrFNutR00mYVq3M.2kOS5VTC0rZBdtsyEWAHJSmcydxiAi5L4m",
     isActive: true,
     isAdmin: false,
-    phoneBook: [ObjectId("60aae4843ae33121e0de8501"), ObjectId("60aae4843ae33121e0de8502"), ObjectId("60aae4843ae33121e0de8503")],
+    phoneBook: [
+      ObjectId("60aae4843ae33121e0de8501"),
+      ObjectId("60aae4843ae33121e0de8502"),
+      ObjectId("60aae4843ae33121e0de8503"),
+    ],
     isDelete: false,
     friends: [],
     friendRequest: [],
@@ -329,7 +333,11 @@ db.conversations.insertMany([
     _id: ObjectId("60aae4843ae33121e0de0000"),
     name: "Nhóm 10 Công nghệ mới",
     type: "Group",
-    members: [ObjectId("60aae4843ae33121e0de8501"), ObjectId("60aae4843ae33121e0de1234"), ObjectId("60aae4843ae33121e0de8763")],
+    members: [
+      ObjectId("60aae4843ae33121e0de8501"),
+      ObjectId("60aae4843ae33121e0de1234"),
+      ObjectId("60aae4843ae33121e0de8763"),
+    ],
     messages: [
       ObjectId("60aae4843ae33121e0de1235"),
       ObjectId("60aae4843ae33121e0de5678"),

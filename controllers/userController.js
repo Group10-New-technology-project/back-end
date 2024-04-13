@@ -279,7 +279,7 @@ const deleteFriendRequest = async (req, res) => {
     if (!sender || !receiver) {
       return res.status(400).json({ error: "Sender or receiver not found" });
     }
-    s;
+
     // Loại bỏ yêu cầu kết bạn từ mảng friendRequest của người gửi
     sender.friendRequest = sender.friendRequest.filter((request) => request._id.toString() !== id_receiver);
 
@@ -370,22 +370,6 @@ const getUserByID = async (req, res) => {
     res.status(500).json(err);
   }
 };
-
-const getUserByUserName = async (req, res) => {
-  try {
-    // Tìm người dùng theo tên người dùng
-    const user = await User.findOne({ username: req.params.username });
-    // Kiểm tra xem người dùng có tồn tại không
-    if (user) {
-      res.status(200).json(user); // Trả về thông tin người dùng nếu tìm thấy
-    } else {
-      res.status(404).json({ message: "Không tìm thấy người dùng" }); // Trả về lỗi nếu không tìm thấy người dùng
-    }
-  } catch (err) {
-    res.status(500).json(err); // Trả về lỗi nếu có lỗi xảy ra trong quá trình tìm kiếm người dùng
-  }
-};
-
 //Update ảnh user
 const uploadAvatarToS3 = async (req, res) => {
   try {
@@ -489,6 +473,21 @@ const forgotPassword = async (req, res) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
+  }
+};
+
+const getUserByUserName = async (req, res) => {
+  try {
+    // Tìm người dùng theo tên người dùng
+    const user = await User.findOne({ username: req.params.username });
+    // Kiểm tra xem người dùng có tồn tại không
+    if (user) {
+      res.status(200).json(user); // Trả về thông tin người dùng nếu tìm thấy
+    } else {
+      res.status(404).json({ message: "Không tìm thấy người dùng" }); // Trả về lỗi nếu không tìm thấy người dùng
+    }
+  } catch (err) {
+    res.status(500).json(err); // Trả về lỗi nếu có lỗi xảy ra trong quá trình tìm kiếm người dùng
   }
 };
 

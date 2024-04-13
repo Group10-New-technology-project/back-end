@@ -1,9 +1,5 @@
 const Message = require("../models/Message");
 const Conversation = require("../models/Conversation");
-<<<<<<< Updated upstream
-
-const postMessage = async (req, res) => {
-=======
 const multer = require("multer");
 const AWS = require("aws-sdk");
 // Cấu hình AWS
@@ -21,7 +17,6 @@ const upload = multer({
 });
 
 const postMessageWeb = async (req, res) => {
->>>>>>> Stashed changes
   const { conversationId, content, memberId, type } = req.body; // Lấy thông tin tin nhắn từ request body
   const createAt = new Date(); // Lấy thời gian hiện tại
   try {
@@ -69,10 +64,6 @@ const postMessageWeb = async (req, res) => {
   }
 };
 
-<<<<<<< Updated upstream
-module.exports = {
-  postMessage,
-=======
 const getMessagesByConversationId = async (req, res) => {
   const conversationId = req.params.conversationId;
   try {
@@ -330,5 +321,4 @@ module.exports = {
   uploadImageToS3,
   deleteMessage,
   thuHoiMessage,
->>>>>>> Stashed changes
 };

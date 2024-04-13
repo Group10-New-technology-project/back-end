@@ -48,12 +48,12 @@ const getConversationById = async (req, res) => {
         },
       });
     if (!conversation) {
-      return res.status(404).json({ error: "Conversation not found" });
+      return res.status(404).json([]);
     }
     res.status(200).json(conversation);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json([]);
   }
 };
 
@@ -70,17 +70,16 @@ const getConversationByMemberId = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-
 const getConversationByUserId = async (req, res) => {
   try {
     const userId = req.params.userId;
     const members = await Members.find({ userId: userId });
     if (!members || members.length === 0) {
-      return res.status(404).json({ message: "Members not found for this user" });
+      return res.status(200).json([]);
     }
 
     const memberId = members[0]._id;
-    console.log("menid da lay", memberId);
+
     const conversations = await Conversation.find({
       members: memberId,
     })
@@ -99,12 +98,12 @@ const getConversationByUserId = async (req, res) => {
         },
       });
     if (!conversations) {
-      return res.status(404).json({ message: "Conversation not found" });
+      return res.status(404).json([]);
     }
     res.status(200).json(conversations);
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Server error" });
+    res.status(500).json([]);
   }
 };
 const seachConversation = async (req, res) => {
@@ -121,7 +120,6 @@ const seachConversation = async (req, res) => {
   }
 };
 
-// --------------------Duy----------------------------
 const getConversationByIdApp = async (req, res) => {
   const id = req.params.id;
   console.log("id", id);
@@ -225,8 +223,8 @@ module.exports = {
   getConversationById,
   getConversationByMemberId,
   seachConversation,
-  getConversationByUserId,
   getConversationByIdApp,
+  getConversationByUserId,
   createConversation,
   createConversationWeb,
 };

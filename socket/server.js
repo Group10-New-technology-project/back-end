@@ -1,38 +1,26 @@
 const fs = require("fs");
 const socketIo = require("socket.io");
+
 function initializeSocketServer(server) {
   const io = socketIo(server, {
     cors: "*",
   });
 
-<<<<<<< HEAD
-  const snakes = {};
+  let listUserInRoom = [];
+  let activeUsers = [];
 
-=======
->>>>>>> 77add1e6981857561e6d9683dfaded2291843678
   io.on("connection", (socket) => {
-    console.log("Có 1 user kết nối có id là: " + socket.id);
+    console.log(`User connected with id: ${socket.id}`);
 
-    socket.emit("message", "Chào mừng bạn đến với chat!");
-
-    socket.on("joinRoom", (room) => {
-      socket.join(room);
-      console.log("User " + socket.id + " joined room " + room);
-      // Gửi tin nhắn xác nhận khi người dùng tham gia phòng
-      const rooms = Array.from(socket.adapter.rooms);
-      console.log("Danh sách phòng:", rooms);
-      io.to(room).emit("message", "User " + socket.id + " vừa tham gia phòng " + room);
+    // Xử lý khi một người dùng kết nối mới
+    socket.on("new-user-add", (newUserId) => {
+      if (!activeUsers.some((user) => user.userId === newUserId)) {
+        activeUsers.push({ userId: newUserId, socketId: socket.id });
+        console.log("New User Connected", activeUsers);
+      }
+      io.emit("get-users", activeUsers);
     });
 
-<<<<<<< Updated upstream
-    socket.on("leaveRoom", (room) => {
-      socket.leave(room);
-      console.log("User " + socket.id + " vừa thoát phòng " + room);
-      // Gửi tin nhắn xác nhận khi người dùng rời khỏi phòng
-      io.to(room).emit("message", "User " + socket.id + " vừa thoát phòng " + room);
-      //     }
-      // });
-=======
     // Xử lý khi một người dùng tham gia phòng
     socket.on("joinRoom", ({ roomId, userId }) => {
       const existingUser = listUserInRoom.find((user) => user.socketId === socket.id);
@@ -69,36 +57,23 @@ function initializeSocketServer(server) {
       io.to(roomId).emit("message", `User ${userId} joined room ${roomId}`);
       const usersInRoom = listUserInRoom.filter((user) => user.roomId === roomId);
       io.to(roomId).emit("usersInRoom", usersInRoom);
->>>>>>> Stashed changes
     });
 
+    // Xử lý khi một người dùng gửi tin nhắn
     socket.on("message", (data) => {
       const { message, room } = data;
       console.log("Tin nhắn từ user " + socket.id + ":", message);
       console.log("Phòng gửi đến:", room);
-      console.log("Danh sách phòng:", Array.from(socket.rooms));
-<<<<<<< HEAD
-      // Gửi tin nhắn đến tất cả các client trong phòng được chỉ đxịnh
-=======
-      // Gửi tin nhắn đến tất cả các client trong phòng được chỉ định
->>>>>>> 77add1e6981857561e6d9683dfaded2291843678
-
       io.to(room).emit("message", "User " + socket.id + ": " + message);
     });
 
-    socket.on("rooms", () => {
-      updateRoomList();
-    });
-
+    // Xử lý khi một người dùng ngắt kết nối
     socket.on("disconnect", () => {
-      console.log("User disconnected: " + socket.id);
       io.emit("message", "User " + socket.id + " đã rời khỏi cuộc trò chuyện.");
+      activeUsers = activeUsers.filter((user) => user.socketId !== socket.id);
+      console.log("User Disconnected", activeUsers);
+      io.emit("get-users", activeUsers);
     });
-    function updateRoomList() {
-      const rooms = Array.from(socket.adapter.rooms);
-      console.log("Danh sách phòng:", rooms);
-      socket.emit("room", rooms);
-    }
   });
 }
 
