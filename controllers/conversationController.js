@@ -367,9 +367,17 @@ const leaveConversation = async (req, res) => {
     // Lọc ra danh sách thành viên mới sau khi loại bỏ thành viên có userID ra khỏi danh sách thành viên của cuộc hội thoại
     const updatedMembers = conversation.members.filter((memberId) => !memberId.equals(member._id));
 
-    // Cập nhật danh sách thành viên của cuộc hội thoại sau khi loại bỏ thành viên
-    await Conversation.findByIdAndUpdate(conversationID, { members: updatedMembers });
+    // Kiểm tra xem userID có phải là phó nhóm không
+    if (conversation.deputy && conversation.deputy.includes(member._id)) {
+      // Nếu là phó nhóm, loại bỏ userID ra khỏi danh sách phó nhóm
+      const updatedDeputy = conversation.deputy.filter((deputyId) => !deputyId.equals(member._id));
 
+      // Cập nhật lại danh sách phó nhóm của cuộc trò chuyện
+      await Conversation.findByIdAndUpdate(conversationID, { members: updatedMembers, deputy: updatedDeputy });
+    } else {
+      // Nếu không phải là phó nhóm, chỉ cập nhật lại danh sách thành viên của cuộc trò chuyện
+      await Conversation.findByIdAndUpdate(conversationID, { members: updatedMembers });
+    }
     // Sau khi cập nhật thành công, lấy lại thông tin cuộc hội thoại sau khi đã được cập nhật
     const updatedConversation = await Conversation.findById(conversationID);
 
