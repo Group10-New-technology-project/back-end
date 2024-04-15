@@ -175,7 +175,8 @@ const createConversation = async (req, res) => {
 };
 const createConversationWeb = async (req, res) => {
   try {
-    const { arrayUserId } = req.body;
+    const { groupImage, name, arrayUserId } = req.body;
+    // Kiểm tra và gán giá trị mặc định nếu groupImage là null hoặc undefined
 
     // Kiểm tra xem arrayUserId có chứa đúng số lượng userId phù hợp hay không
     if (!Array.isArray(arrayUserId) || (arrayUserId.length !== 2 && arrayUserId.length !== 3)) {
@@ -218,11 +219,11 @@ const createConversationWeb = async (req, res) => {
 
     // Tạo cuộc hội thoại mới nếu chưa tồn tại
     const newConversation = new Conversation({
-      name: `Chat ${member1.userId} and ${member2.userId}`,
+      name: name,
       type: type,
       members: members,
       messages: [],
-      groupImage: "",
+      groupImage: groupImage || "https://image666666.s3.ap-southeast-1.amazonaws.com/no-image.png",
       leader: member1._id, // Thành viên thứ nhất là người chủ đề
       createAt: new Date(),
       isJoinFromLink: false,
