@@ -13,7 +13,33 @@ const getConversations = async (req, res) => {
           model: "User", // Tên của model người dùng trong Mongoose
         },
       })
-      .populate("messages");
+      .populate({
+        path: "messages",
+        populate: {
+          path: "memberId",
+          model: "Member", // Tên của model người dùng trong Mongoose
+          populate: {
+            path: "userId",
+            model: "User",
+            select: "avatar name",
+          },
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "deleteMember",
+          model: "Member",
+        },
+      })
+      .populate({
+        path: "leader",
+        populate: {
+          path: "userId",
+          model: "User",
+          select: "avatar name",
+        },
+      });
 
     res.status(200).json(conversations);
   } catch (error) {
@@ -37,7 +63,12 @@ const getConversationById = async (req, res) => {
         path: "messages",
         populate: {
           path: "memberId",
-          model: "Member",
+          model: "Member", // Tên của model người dùng trong Mongoose
+          populate: {
+            path: "userId",
+            model: "User",
+            select: "avatar name",
+          },
         },
       })
       .populate({
@@ -45,6 +76,14 @@ const getConversationById = async (req, res) => {
         populate: {
           path: "deleteMember",
           model: "Member",
+        },
+      })
+      .populate({
+        path: "leader",
+        populate: {
+          path: "userId",
+          model: "User",
+          select: "avatar name",
         },
       });
     if (!conversation) {
@@ -95,6 +134,26 @@ const getConversationByUserId = async (req, res) => {
         populate: {
           path: "memberId",
           model: "Member", // Tên của model người dùng trong Mongoose
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "memberId",
+          model: "Member", // Tên của model người dùng trong Mongoose
+          populate: {
+            path: "userId",
+            model: "User",
+            select: "avatar name",
+          },
+        },
+      })
+      .populate({
+        path: "leader",
+        populate: {
+          path: "userId",
+          model: "User",
+          select: "avatar name",
         },
       });
     if (!conversations) {
@@ -175,7 +234,8 @@ const createConversation = async (req, res) => {
 };
 const createConversationWeb = async (req, res) => {
   try {
-    const { arrayUserId } = req.body;
+    const { groupImage, name, arrayUserId } = req.body;
+    // Kiểm tra và gán giá trị mặc định nếu groupImage là null hoặc undefined
 
     // Kiểm tra xem arrayUserId có chứa đúng số lượng userId phù hợp hay không
     if (!Array.isArray(arrayUserId) || (arrayUserId.length !== 2 && arrayUserId.length !== 3)) {
@@ -218,11 +278,11 @@ const createConversationWeb = async (req, res) => {
 
     // Tạo cuộc hội thoại mới nếu chưa tồn tại
     const newConversation = new Conversation({
-      name: `Chat ${member1.userId} and ${member2.userId}`,
+      name: name || "",
       type: type,
       members: members,
       messages: [],
-      groupImage: "",
+      groupImage: groupImage || "https://image666666.s3.ap-southeast-1.amazonaws.com/no-image.png",
       leader: member1._id, // Thành viên thứ nhất là người chủ đề
       createAt: new Date(),
       isJoinFromLink: false,
