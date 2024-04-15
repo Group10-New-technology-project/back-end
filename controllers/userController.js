@@ -90,6 +90,22 @@ const getfriend = async (req, res) => {
   }
 };
 
+const getFriendWithDetails = async (req, res) => {
+  const id = req.params.id;
+  console.log(id);
+  try {
+    const user = await User.findById(id).populate("friends");
+    console.log(user);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    res.status(200).json(user.friends);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 const deleteFriends = async (req, res) => {
   const { id_sender, id_receiver } = req.body;
   try {
@@ -512,4 +528,5 @@ module.exports = {
   deleteFriends,
   getfriendRequestWeb,
   getfriendRecivedWeb,
+  getFriendWithDetails,
 };

@@ -181,21 +181,17 @@ const createConversationWeb = async (req, res) => {
     if (!Array.isArray(arrayUserId) || (arrayUserId.length !== 2 && arrayUserId.length !== 3)) {
       return res.status(400).json({ error: "arrayUserId must contain exactly 2 or 3 userIds" });
     }
-
     const [userId1, userId2, userId3] = arrayUserId; // Giả sử userId3 chỉ được sử dụng khi mảng có 3 thành viên
-
     // Tìm thông tin thành viên thứ nhất
     const member1 = await Member.findOne({ userId: userId1 });
     if (!member1) {
       return res.status(404).json({ error: `Member with userId ${userId1} not found` });
     }
-
     // Tìm thông tin thành viên thứ hai
     const member2 = await Member.findOne({ userId: userId2 });
     if (!member2) {
       return res.status(404).json({ error: `Member with userId ${userId2} not found` });
     }
-
     let type = "Direct"; // Loại cuộc hội thoại mặc định là Direct
     let members = [member1._id, member2._id]; // Mặc định chỉ có 2 thành viên
 
@@ -210,7 +206,6 @@ const createConversationWeb = async (req, res) => {
         return res.status(400).json({ error: "Conversation already exists" });
       }
     }
-
     // Nếu mảng chứa 3 thành viên, tạo cuộc hội thoại nhóm (Group)
     if (arrayUserId.length === 3) {
       const member3 = await Member.findOne({ userId: userId3 });
