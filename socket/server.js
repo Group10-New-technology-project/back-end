@@ -66,6 +66,25 @@ function initializeSocketServer(server) {
       console.log("Phòng gửi đến:", room);
       io.to(room).emit("message", "User " + socket.id + ": " + message);
     });
+    socket.on("sendMessage", (data) => {
+      console.log(`Tin nhắn từ user ${socket.id}:`, data);
+
+      io.emit("sendMessage", data);
+    });
+
+    socket.on("createGroup", (data) => {
+      const { message, room } = data;
+      console.log("Tin nhắn khi tạo " + message);
+      console.log("Rom tạo là:", message);
+      io.to(room).emit("createGroup", message);
+    });
+
+    socket.on("leaveGroup", (data) => {
+      const { message, room } = data;
+      console.log("Tin nhắn khi tạo " + message);
+      console.log("Rom tạo là:", message);
+      io.to(room).emit("leaveGroup", message);
+    });
 
     // Xử lý khi một người dùng ngắt kết nối
     socket.on("disconnect", () => {

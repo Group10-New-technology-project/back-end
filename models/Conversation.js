@@ -49,6 +49,18 @@ const conversationSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    notifications: [
+      {
+        message: {
+          type: String,
+          required: true,
+        },
+        date: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { strict: false }
 );

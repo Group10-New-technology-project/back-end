@@ -2,6 +2,7 @@ const Member = require("../models/Member");
 const Message = require("../models/Message");
 const Conversation = require("../models/Conversation");
 const Members = require("../models/Member");
+const User = require("../models/User");
 //1
 const getConversations = async (req, res) => {
   try {
@@ -231,9 +232,31 @@ const createConversation = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
+
+const generateNotifications = (type, user1, user2) => {
+  const currentDate = new Date(); // Lấy thời gian hiện tại
+
+  if (type === "Group") {
+    // For Group type, use user1's name in the notification
+    return [
+      {
+        message: `${user1.name} created a group`,
+        date: currentDate,
+      },
+    ];
+  } else {
+    // For Direct type, notify both users
+    return [
+      {
+        message: `${user1.name} started a conversation with ${user2.name}`,
+        date: currentDate,
+      },
+    ];
+  }
+};
 const createConversationWeb = async (req, res) => {
   try {
-    const { groupImage, name, arrayUserId } = req.body;
+    const { groupImage, name, arrayUserId, notifications } = req.body;
     // Kiểm tra và gán giá trị mặc định nếu groupImage là null hoặc undefined
 
     // Kiểm tra xem arrayUserId có chứa đúng số lượng userId phù hợp hay không
@@ -243,6 +266,11 @@ const createConversationWeb = async (req, res) => {
     const [userId1, userId2, userId3] = arrayUserId; // Giả sử userId3 chỉ được sử dụng khi mảng có 3 thành viên
     // Tìm thông tin thành viên thứ nhất
     const member1 = await Member.findOne({ userId: userId1 });
+    const user1 = await User.findOne({ _id: userId1 });
+    const user2 = await User.findOne({ _id: userId2 });
+    if (!user1 || !user2) {
+      return res.status(404).json({ error: "User not found" });
+    }
     if (!member1) {
       return res.status(404).json({ error: `Member with userId ${userId1} not found` });
     }
@@ -285,6 +313,7 @@ const createConversationWeb = async (req, res) => {
       leader: member1._id, // Thành viên thứ nhất là người chủ đề
       createAt: new Date(),
       isJoinFromLink: false,
+      notifications: generateNotifications(type, user1, user2),
     });
 
     await newConversation.save();
