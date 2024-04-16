@@ -85,6 +85,14 @@ const getConversationById = async (req, res) => {
           model: "User",
           select: "avatar name",
         },
+      })
+      .populate({
+        path: "deputy",
+        populate: {
+          path: "userId",
+          model: "User",
+          select: "avatar name",
+        },
       });
     if (!conversation) {
       return res.status(404).json([]);
@@ -542,12 +550,10 @@ const removeDeputyFromConversation = async (req, res) => {
 const deleteConversation = async (req, res) => {
   try {
     const conversationID = req.params.id;
-
     // Kiểm tra xem conversationID đã được cung cấp trong req.params hay không
     if (!conversationID) {
       return res.status(400).json({ error: "conversationID must be provided in the request params" });
     }
-
     // Tìm và xóa cuộc trò chuyện dựa trên conversationID
     const deletedConversation = await Conversation.findByIdAndDelete(conversationID);
     if (!deletedConversation) {
