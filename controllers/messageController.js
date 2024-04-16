@@ -52,6 +52,18 @@ const postMessageWeb = async (req, res) => {
           path: "memberId",
           model: "Member", // Tên của model người dùng trong Mongoose
         },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "memberId",
+          model: "Member", // Tên của model người dùng trong Mongoose
+          populate: {
+            path: "userId",
+            model: "User",
+            select: "avatar name",
+          },
+        },
       });
     if (!conversation2) {
       return res.status(404).json({ error: "Conversation not found" });
@@ -223,7 +235,7 @@ const deleteMessage = async (req, res) => {
     // Lưu lại cuộc trò chuyện
     await updatedConversation.save();
 
-    res.json(updatedConversation);
+    res.status(200).json(updatedConversation);
 
     console.log("conversation", updatedConversation);
   } catch (error) {

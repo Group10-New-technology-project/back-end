@@ -75,10 +75,9 @@ const signup = async (req, res) => {
 
 const getfriend = async (req, res) => {
   const id = req.params.id;
-  console.log(id);
   try {
     const user = await User.findById(id);
-    console.log(user);
+
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -92,10 +91,9 @@ const getfriend = async (req, res) => {
 
 const getFriendWithDetails = async (req, res) => {
   const id = req.params.id;
-  console.log(id);
   try {
     const user = await User.findById(id).populate("friends");
-    console.log(user);
+
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -132,11 +130,9 @@ const deleteFriends = async (req, res) => {
 };
 const getfriendRecivedWeb = async (req, res) => {
   const id = req.params.id;
-  console.log(id);
 
   try {
     const user = await User.findById(id);
-    console.log(user);
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -175,11 +171,9 @@ const getfriendRecivedWeb = async (req, res) => {
 };
 const getfriendRequestWeb = async (req, res) => {
   const id = req.params.id;
-  console.log(id);
 
   try {
     const user = await User.findById(id);
-    console.log(user);
 
     if (!user) {
       return res.status(404).json({ error: "User not found" });
@@ -213,10 +207,10 @@ const getfriendRequestWeb = async (req, res) => {
 };
 const getfriendRecived = async (req, res) => {
   const id = req.params.id;
-  console.log(id);
+
   try {
     const user = await User.findById(id);
-    console.log(user);
+
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -230,10 +224,10 @@ const getfriendRecived = async (req, res) => {
 };
 const getfriendRequest = async (req, res) => {
   const id = req.params.id;
-  console.log(id);
+
   try {
     const user = await User.findById(id);
-    console.log(user);
+
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
@@ -346,7 +340,6 @@ const acceptFriendRequest = async (req, res) => {
 
 const getPhoneBook = async (req, res) => {
   const id = req.params.id;
-  console.log(id);
   try {
     const user = await User.findById(id);
     if (!user) {

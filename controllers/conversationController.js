@@ -168,7 +168,7 @@ const getConversationByUserId = async (req, res) => {
 const seachConversation = async (req, res) => {
   try {
     const searchKeyword = req.query.searchConversation;
-    console.log(searchKeyword);
+
     const conversations = await Conversation.find({
       $or: [{ name: { $regex: searchKeyword, $options: "i" } }],
     });
@@ -181,7 +181,6 @@ const seachConversation = async (req, res) => {
 
 const getConversationByIdApp = async (req, res) => {
   const id = req.params.id;
-  console.log("id", id);
   try {
     const conversation = await Conversation.findById(id)
       .populate({
