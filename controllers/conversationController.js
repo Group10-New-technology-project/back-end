@@ -40,6 +40,14 @@ const getConversations = async (req, res) => {
           model: "User",
           select: "avatar name",
         },
+      })
+      .populate({
+        path: "deputy",
+        populate: {
+          path: "userId",
+          model: "User",
+          select: "avatar name",
+        },
       });
 
     res.status(200).json(conversations);
@@ -164,6 +172,14 @@ const getConversationByUserId = async (req, res) => {
           model: "User",
           select: "avatar name",
         },
+      })
+      .populate({
+        path: "deputy",
+        populate: {
+          path: "userId",
+          model: "User",
+          select: "avatar name",
+        },
       });
     if (!conversations) {
       return res.status(404).json([]);
@@ -174,6 +190,7 @@ const getConversationByUserId = async (req, res) => {
     res.status(500).json([]);
   }
 };
+
 const seachConversation = async (req, res) => {
   try {
     const searchKeyword = req.query.searchConversation;
