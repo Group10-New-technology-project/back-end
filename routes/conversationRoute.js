@@ -22,10 +22,9 @@ router.get("/getConversationByIdApp/:id", conversationController.getConversation
 router.post("/createConversationApp", conversationController.createConversation);
 //http://localhost:3000/api/v1/conversation/createConversationWeb
 router.post("/createConversationWeb", conversationController.createConversationWeb);
-//addMembersToConversation
-//http:localhost:3000/api/v1/users/addMembersToConversation
-router.post("/addMembersToConversation", conversationController.addMembersToConversation);
-
+//addUserToConversation
+//http:localhost:3000/api/v1/conversation/addUserToConversation
+router.post("/addUserToConversation", conversationController.addUserToConversation);
 //addDeputyToConversation
 //http://localhost:3000/api/v1/conversation/addDeputyToConversation
 router.post("/addDeputyToConversation", conversationController.addDeputyToConversation);
@@ -41,4 +40,7 @@ router.post("/leaveConversation", conversationController.leaveConversation);
 //deleteConversation
 // http://localhost:3000/api/v1/conversation/deleteConversation/60aae4843ae33121e0de0000
 router.post("/deleteConversationById/:id", conversationController.deleteConversation);
+
+//http://localhost:3000/api/v1/conversation/getArrayUserConversationUsers/60aae4843ae33121e0de8506
+router.get("/getArrayUserConversationUsers/:conversationID", conversationController.getArrayUserConversationUsers);
 module.exports = router;

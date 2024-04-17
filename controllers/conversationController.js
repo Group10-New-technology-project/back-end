@@ -3,6 +3,7 @@ const Message = require("../models/Message");
 const Conversation = require("../models/Conversation");
 const Members = require("../models/Member");
 const User = require("../models/User");
+const { get } = require("http");
 //1
 const getConversations = async (req, res) => {
   try {
@@ -353,7 +354,7 @@ const createConversationWeb = async (req, res) => {
   }
 };
 
-const addMembersToConversation = async (req, res) => {
+const addUserToConversation = async (req, res) => {
   try {
     const { conversationID, arrayUserID } = req.body;
 
@@ -399,6 +400,32 @@ const addMembersToConversation = async (req, res) => {
   } catch (error) {
     console.error("Error adding members to conversation:", error);
     res.status(500).json({ error: "Failed to add members to conversation" });
+  }
+};
+
+const getArrayUserConversationUsers = async (req, res) => {
+  try {
+    const { conversationID } = req.params;
+
+    // Kiểm tra xem conversationID đã được cung cấp trong req.params hay không
+    if (!conversationID) {
+      return res.status(400).json({ error: "conversationID must be provided in the request params" });
+    }
+
+    // Tìm cuộc trò chuyện với conversationID đã cung cấp
+    const conversation = await Conversation.findById(conversationID);
+    if (!conversation) {
+      return res.status(404).json({ error: `Conversation with ID ${conversationID} not found` });
+    }
+    // Lấy thông tin về thành viên từ danh sách thành viên của cuộc trò chuyện
+    const members = await Member.find({ _id: { $in: conversation.members } });
+    // Trích xuất chỉ các trường "userId" từ mảng members và trả về
+    const userIds = members.map((member) => member.userId);
+
+    res.status(200).json(userIds);
+  } catch (error) {
+    console.error("Error fetching conversation members:", error);
+    res.status(500).json({ error: "Failed to fetch conversation members" });
   }
 };
 
@@ -625,10 +652,11 @@ module.exports = {
   getConversationByUserId,
   createConversation,
   createConversationWeb,
-  addMembersToConversation,
+  addUserToConversation,
   leaveConversation,
   addDeputyToConversation,
   removeDeputyFromConversation,
   selectNewLeader,
   deleteConversation,
+  getArrayUserConversationUsers,
 };
