@@ -41,6 +41,16 @@ const messageSchema = new mongoose.Schema({
       ref: "Member", // Tham chiếu tới collection 'Member' cho danh sách các thành viên được gắn thẻ
     },
   ],
+  reply: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Message", // Tham chiếu tới collection 'Message' cho danh sách các tin nhắn được trả lời
+    },
+  ],
+  notyfi: {
+    type: String,
+    default: "", // Giả sử bạn muốn mặc định là chuỗi rỗng, bạn có thể thay đổi giá trị mặc định tùy theo yêu cầu của mình
+  },
 });
 
 const Message = mongoose.model("Message", messageSchema); // Tên collection là "Message"
