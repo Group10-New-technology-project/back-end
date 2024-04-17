@@ -12,7 +12,7 @@ const messageSchema = new mongoose.Schema({
   },
   type: {
     type: String,
-    enum: ["text", "image", "video", "audio", "file"], // Thể loại tin nhắn có thể là văn bản, hình ảnh, video hoặc âm thanh
+    enum: ["text", "image", "video", "audio", "file", "notify"], // Thể loại tin nhắn có thể là văn bản, hình ảnh, video hoặc âm thanh
     required: true,
   },
   createAt: {
