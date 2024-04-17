@@ -403,6 +403,52 @@ const addUserToConversation = async (req, res) => {
   }
 };
 
+const addUserToArrayConversation = async (req, res) => {
+  try {
+    const { userID, arrayConversationID } = req.body;
+
+    // Kiểm tra xem userID và arrayConversationID đã được cung cấp trong req.body hay không
+    if (!userID || !arrayConversationID || !Array.isArray(arrayConversationID)) {
+      return res.status(400).json({ error: "userID and arrayConversationID must be provided in the request body as an array" });
+    }
+
+    // Xác nhận tồn tại của userID
+    const user = await Member.findOne({ userId: userID });
+    if (!user) {
+      return res.status(404).json({ error: `User with userID ${userID} not found` });
+    }
+
+    // Xác nhận tồn tại của các cuộc hội thoại trong arrayConversationID và lấy ObjectId của từng cuộc hội thoại
+    const conversationsToAddUser = [];
+    for (const conversationID of arrayConversationID) {
+      const conversation = await Conversation.findById(conversationID);
+      if (!conversation) {
+        return res.status(404).json({ error: `Conversation with ID ${conversationID} not found` });
+      }
+      if (!conversation.members.includes(user._id)) {
+        conversationsToAddUser.push(conversation._id);
+      }
+    }
+    // Nếu không có cuộc hội thoại mới cần thêm user vào, không cần cập nhật gì và trả về user hiện tại
+    if (conversationsToAddUser.length === 0) {
+      return res.status(200).json(user);
+    }
+
+    // Thêm user vào các cuộc hội thoại
+    for (const conversationID of conversationsToAddUser) {
+      await Conversation.findByIdAndUpdate(conversationID, { $push: { members: user._id } });
+    }
+
+    // Sau khi cập nhật thành công, lấy lại thông tin user sau khi đã được cập nhật
+    const updatedUser = await Member.findOne({ userId: userID });
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.error("Error adding user to conversations:", error);
+    res.status(500).json({ error: "Failed to add user to conversations" });
+  }
+};
+
 const getArrayUserConversationUsers = async (req, res) => {
   try {
     const { conversationID } = req.params;
@@ -642,21 +688,46 @@ const deleteConversation = async (req, res) => {
     res.status(500).json({ error: "Failed to delete conversation" });
   }
 };
+const getArrayConversationUsersByUser = async (req, res) => {
+  try {
+    const userID = req.params.userID;
+    const members = await Member.find({ userId: userID });
+    if (!members || members.length === 0) {
+      return res.status(200).json([]);
+    }
+    const memberId = members[0]._id;
+    const conversations = await Conversation.find({
+      members: memberId,
+    });
+    if (!conversations) {
+      return res.status(404).json([]);
+    }
+    const arrayConversation = conversations.map((conversation) => {
+      return conversation._id;
+    });
+    res.status(200).json(arrayConversation);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json([]);
+  }
+};
 
 module.exports = {
   getConversations,
   getConversationById,
   getConversationByMemberId,
-  seachConversation,
   getConversationByIdApp,
+  getArrayUserConversationUsers,
+  getArrayConversationUsersByUser, // Moi them
+  seachConversation,
   getConversationByUserId,
   createConversation,
   createConversationWeb,
-  addUserToConversation,
   leaveConversation,
   addDeputyToConversation,
   removeDeputyFromConversation,
   selectNewLeader,
   deleteConversation,
-  getArrayUserConversationUsers,
+  addUserToConversation,
+  addUserToArrayConversation, // Moi them
 };
