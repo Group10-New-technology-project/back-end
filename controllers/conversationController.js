@@ -285,10 +285,10 @@ const createConversationWeb = async (req, res) => {
     // Kiểm tra và gán giá trị mặc định nếu groupImage là null hoặc undefined
 
     // Kiểm tra xem arrayUserId có chứa đúng số lượng userId phù hợp hay không
-    if (!Array.isArray(arrayUserId) || (arrayUserId.length !== 2 && arrayUserId.length !== 3)) {
+    if (!Array.isArray(arrayUserId) || arrayUserId.length < 2) {
       return res.status(400).json({ error: "arrayUserId must contain exactly 2 or 3 userIds" });
     }
-    const [userId1, userId2, userId3] = arrayUserId; // Giả sử userId3 chỉ được sử dụng khi mảng có 3 thành viên
+    const [userId1, userId2] = arrayUserId; // Giả sử userId3 chỉ được sử dụng khi mảng có 3 thành viên
     // Tìm thông tin thành viên thứ nhất
     const member1 = await Member.findOne({ userId: userId1 });
     const user1 = await User.findOne({ _id: userId1 });
@@ -319,13 +319,16 @@ const createConversationWeb = async (req, res) => {
       }
     }
     // Nếu mảng chứa 3 thành viên, tạo cuộc hội thoại nhóm (Group)
-    if (arrayUserId.length === 3) {
-      const member3 = await Member.findOne({ userId: userId3 });
-      if (!member3) {
-        return res.status(404).json({ error: `Member with userId ${userId3} not found` });
+    if (arrayUserId.length > 2) {
+      const userIdsForGroup = arrayUserId.slice(2);
+      for (const userId of userIdsForGroup) {
+        const member = await Member.findOne({ userId });
+        if (!member) {
+          return res.status(404).json({ error: `Member with userId ${userId} not found` });
+        }
+        type = "Group"; // Loại cuộc hội thoại là Group
+        members.push(member._id);
       }
-      type = "Group"; // Đặt loại cuộc hội thoại là Group
-      members.push(member3._id); // Thêm thành viên thứ ba vào mảng thành viên
     }
 
     // Tạo cuộc hội thoại mới nếu chưa tồn tại
