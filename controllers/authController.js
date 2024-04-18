@@ -59,10 +59,10 @@ const authController = {
       });
       // hidden password
       // const { password, ...others } = existingUser._doc;
-      res.status(200).json({ user, accessToken, refreshToken });
+      return res.status(200).json({ user, accessToken, refreshToken });
     } catch (error) {
       console.error(error);
-      res.status(500).json({ error: "Server error" });
+      return res.status(500).json({ error: "Server error" });
     }
   },
 
@@ -93,11 +93,11 @@ const authController = {
     try {
       const user = await User.findOne({ username: req.body.username });
       if (!user) {
-        res.status(404).json("Incorrect username");
+        return res.status(404).json("Incorrect username");
       }
       const validPassword = await bcrypt.compare(req.body.password, user.password);
       if (!validPassword) {
-        res.status(404).json("Incorrect password");
+        return res.status(404).json("Incorrect password");
       }
       if (user && validPassword) {
         //Generate access token
@@ -114,10 +114,10 @@ const authController = {
         // hidden password
         const { password, ...others } = user._doc;
 
-        res.status(200).json({ user, accessToken, refreshToken });
+        return res.status(200).json({ user, accessToken, refreshToken });
       }
     } catch (err) {
-      res.status(500).json(err);
+      return res.status(500).json(err);
     }
   },
 
