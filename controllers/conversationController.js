@@ -358,45 +358,32 @@ const addUserToConversation = async (req, res) => {
   try {
     const { conversationID, arrayUserID } = req.body;
 
-    // Kiểm tra xem conversationID và arrayUserID đã được cung cấp trong req.body hay không
-    if (!conversationID || !arrayUserID || !Array.isArray(arrayUserID)) {
-      return res.status(400).json({ error: "conversationID and arrayUserID must be provided in the request body as an array" });
-    }
-
     // Xác nhận tồn tại của conversationID
     const conversation = await Conversation.findById(conversationID);
     if (!conversation) {
       return res.status(404).json({ error: `Conversation with ID ${conversationID} not found` });
     }
 
-    // Xác nhận tồn tại của các thành viên trong arrayUserID và lấy ObjectId của từng thành viên
-    const membersToAdd = [];
+    // Xác nhận tồn tại của các thành viên trong arrayUserID và lấy thông tin của từng thành viên mới
+    const newMemberNames = []; // Danh sách tên người dùng của các thành viên mới được thêm vào
     for (const userID of arrayUserID) {
-      const member = await Member.findOne({ userId: userID });
+      const member = await Member.findOne({ userId: userID }).populate("userId", "name");
       if (!member) {
         return res.status(404).json({ error: `Member with userID ${userID} not found` });
       }
       if (!conversation.members.includes(member._id)) {
-        membersToAdd.push(member._id);
+        // Nếu thành viên chưa tồn tại trong cuộc trò chuyện, thêm tên người dùng vào danh sách
+        newMemberNames.push(member.userId.name);
+        // Thêm thành viên vào cuộc trò chuyện
+        conversation.members.push(member._id);
       }
     }
-    // Nếu không có thành viên mới cần thêm, không cần cập nhật gì và trả về cuộc hội thoại hiện tại
-    if (membersToAdd.length === 0) {
-      return res.status(200).json(conversation);
-    }
 
-    // Thêm các thành viên mới vào danh sách thành viên hiện có
-    const updatedMembers = [...conversation.members, ...membersToAdd];
+    // Cập nhật danh sách thành viên của cuộc hội thoại sau khi đã thêm các thành viên mới
+    await conversation.save();
 
-    // Kiểm tra xem cập nhật thành công trước khi gửi lại phản hồi
-
-    // Cập nhật danh sách thành viên của cuộc hội thoại
-    await Conversation.findByIdAndUpdate(conversationID, { members: updatedMembers });
-
-    // Sau khi cập nhật thành công, lấy lại thông tin cuộc hội thoại sau khi đã được cập nhật
-    const updatedConversation = await Conversation.findById(conversationID);
-
-    res.status(200).json(updatedConversation);
+    // Trả về danh sách tên người dùng của các thành viên mới được thêm vào
+    res.status(200).json({ newMemberNames });
   } catch (error) {
     console.error("Error adding members to conversation:", error);
     res.status(500).json({ error: "Failed to add members to conversation" });

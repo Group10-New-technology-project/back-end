@@ -73,7 +73,7 @@ const authController = {
         isAdmin: user.isAdmin,
       },
       process.env.JWT_ACCESS_KEY,
-      { expiresIn: "1d" }
+      { expiresIn: "365d" }
     );
   },
 
