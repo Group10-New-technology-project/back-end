@@ -219,15 +219,30 @@ const getConversationByIdApp = async (req, res) => {
       })
       .populate({
         path: "messages",
-        populate: {
-          path: "memberId",
-          model: "Member", // Tên của model người dùng trong Mongoose
-          populate: {
-            path: "userId",
-            model: "User",
-            select: "avatar",
+        populate: [
+          {
+            path: "memberId",
+            model: "Member",
+            populate: {
+              path: "userId",
+              model: "User",
+              select: "avatar name",
+            },
           },
-        },
+          {
+            path: "reply",
+            model: "Message",
+            populate: {
+              path: "memberId",
+              model: "Member",
+              populate: {
+                path: "userId",
+                model: "User",
+                select: "avatar name",
+              },
+            },
+          },
+        ],
       });
     if (!conversation) {
       return res.status(404).json({ error: "Conversation not found" });

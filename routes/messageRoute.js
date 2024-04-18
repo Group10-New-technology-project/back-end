@@ -9,5 +9,6 @@ router.get("/getMessagesByConversationId/:conversationId", messageController.get
 router.post("/uploadImageToS3", multer().single("image"), messageController.uploadImageToS3);
 router.post("/deleteMessage", messageController.deleteMessage);
 router.post("/thuHoiMessage", messageController.thuHoiMessage);
+router.post("/addReply", messageController.addReply);
 
 module.exports = router;
