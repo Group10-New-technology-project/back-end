@@ -344,10 +344,52 @@ const createConversationWeb = async (req, res) => {
       isJoinFromLink: false,
       notifications: generateNotifications(type, user1, user2),
     });
+    const updateConver = await newConversation.save();
+    const conversation = await Conversation.findById(updateConver._id)
+      .populate({
+        path: "members",
+        populate: {
+          path: "userId",
+          model: "User",
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "memberId",
+          model: "Member", // Tên của model người dùng trong Mongoose
+          populate: {
+            path: "userId",
+            model: "User",
+            select: "avatar name",
+          },
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "deleteMember",
+          model: "Member",
+        },
+      })
+      .populate({
+        path: "leader",
+        populate: {
+          path: "userId",
+          model: "User",
+          select: "avatar name",
+        },
+      })
+      .populate({
+        path: "deputy",
+        populate: {
+          path: "userId",
+          model: "User",
+          select: "avatar name",
+        },
+      });
 
-    await newConversation.save();
-
-    res.status(201).json(newConversation);
+    res.status(201).json(conversation);
   } catch (error) {
     console.error("Error creating conversation:", error);
     res.status(500).json({ error: "Server error occurred" });

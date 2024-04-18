@@ -37,7 +37,7 @@ const authController = {
         avatar: "https://image666666.s3.ap-southeast-1.amazonaws.com/no-image.png",
         coveravatar: "https://image666666.s3.ap-southeast-1.amazonaws.com/no-image.png",
         dateofbirth: "",
-        gender: "male",
+        gender: "Nam",
         name: name,
         phoneBook: [],
         friends: [],
