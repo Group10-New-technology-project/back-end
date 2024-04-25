@@ -48,4 +48,6 @@ router.post("/addUserToArrayConversation", conversationController.addUserToArray
 
 //http://localhost:3000/api/v1/conversation/getArrayUserConversationUsers/60aae4843ae33121e0de8506
 router.get("/getArrayConversationUsersByUser/:userID", conversationController.getArrayConversationUsersByUser);
+//http://localhost:3000/api/v1/conversation/updateConversationNameById
+router.post("/updateConversationNameById", conversationController.updateConversationNameById);
 module.exports = router;

@@ -29,6 +29,10 @@ const messageSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  pin: {
+    type: Boolean,
+    default: false,
+  },
   reaction: [
     {
       type: mongoose.Schema.Types.ObjectId,
