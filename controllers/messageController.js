@@ -56,6 +56,22 @@ const postMessageWeb = async (req, res) => {
       .populate({
         path: "messages",
         populate: {
+          path: "reply",
+          model: "Message",
+          populate: {
+            path: "memberId",
+            model: "Member",
+            populate: {
+              path: "userId",
+              model: "User",
+              select: "avatar name",
+            },
+          },
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
           path: "memberId",
           model: "Member", // Tên của model người dùng trong Mongoose
           populate: {
@@ -183,6 +199,22 @@ const deleteMessage = async (req, res) => {
       .populate({
         path: "messages",
         populate: {
+          path: "reply",
+          model: "Message",
+          populate: {
+            path: "memberId",
+            model: "Member",
+            populate: {
+              path: "userId",
+              model: "User",
+              select: "avatar name",
+            },
+          },
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
           path: "deleteMember",
           model: "Member", // Tên của model người dùng trong Mongoose
         },
@@ -222,6 +254,22 @@ const deleteMessage = async (req, res) => {
         populate: {
           path: "memberId",
           model: "Member", // Tên của model người dùng trong Mongoose
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "reply",
+          model: "Message",
+          populate: {
+            path: "memberId",
+            model: "Member",
+            populate: {
+              path: "userId",
+              model: "User",
+              select: "avatar name",
+            },
+          },
         },
       })
       .populate({
@@ -272,6 +320,22 @@ const thuHoiMessage = async (req, res) => {
       .populate({
         path: "messages",
         populate: {
+          path: "reply",
+          model: "Message",
+          populate: {
+            path: "memberId",
+            model: "Member",
+            populate: {
+              path: "userId",
+              model: "User",
+              select: "avatar name",
+            },
+          },
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
           path: "deleteMember",
           model: "Member", // Tên của model người dùng trong Mongoose
         },
@@ -304,6 +368,22 @@ const thuHoiMessage = async (req, res) => {
         populate: {
           path: "memberId",
           model: "Member", // Tên của model người dùng trong Mongoose
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "reply",
+          model: "Message",
+          populate: {
+            path: "memberId",
+            model: "Member",
+            populate: {
+              path: "userId",
+              model: "User",
+              select: "avatar name",
+            },
+          },
         },
       })
       .populate({
@@ -355,6 +435,47 @@ const addReply = async (req, res) => {
   }
 };
 
+///Send message to conversations
+const postMessageToConversations = async (req, res) => {
+  const { conversationIds, content, memberId, type } = req.body; // Lấy thông tin từ request body
+  const createAt = new Date(); // Lấy thời gian hiện tại
+
+  try {
+    for (const conversationId of conversationIds) {
+      // Tạo một tin nhắn mới
+      const message = new Message({
+        content,
+        memberId,
+        type,
+        createAt, // Thêm thời gian tạo vào tin nhắn
+      });
+
+      // Lưu tin nhắn vào cơ sở dữ liệu
+      const newMessage = await message.save();
+
+      // Tìm cuộc trò chuyện hoặc nhóm tương ứng
+      const conversation = await Conversation.findById(conversationId);
+
+      if (!conversation) {
+        console.log(`Conversation with ID ${conversationId} not found`);
+        continue;
+      }
+
+      // Thêm tin nhắn vào cuộc trò chuyện hoặc nhóm
+      conversation.messages.push(newMessage._id);
+      await conversation.save();
+
+      console.log(`Message sent to conversation with ID ${conversationId}`);
+    }
+
+    // Trả về tin nhắn mới được tạo
+    res.status(201).json({ message: "Messages sent successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 module.exports = {
   postMessage,
   getMessagesByConversationId,
@@ -363,4 +484,5 @@ module.exports = {
   deleteMessage,
   thuHoiMessage,
   addReply,
+  postMessageToConversations,
 };

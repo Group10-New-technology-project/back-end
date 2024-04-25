@@ -10,5 +10,6 @@ router.post("/uploadImageToS3", multer().single("image"), messageController.uplo
 router.post("/deleteMessage", messageController.deleteMessage);
 router.post("/thuHoiMessage", messageController.thuHoiMessage);
 router.post("/addReply", messageController.addReply);
+router.post("/senderMessageToConversations", messageController.postMessageToConversations);
 
 module.exports = router;

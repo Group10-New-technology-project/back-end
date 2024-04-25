@@ -35,6 +35,23 @@ const getConversations = async (req, res) => {
         },
       })
       .populate({
+        path: "messages",
+        populate: {
+          path: "reply",
+          model: "Message",
+          populate: {
+            path: "memberId",
+            model: "Member",
+            populate: {
+              path: "userId",
+              model: "User",
+              select: "avatar name",
+            },
+          },
+        },
+      })
+
+      .populate({
         path: "leader",
         populate: {
           path: "userId",
@@ -88,6 +105,23 @@ const getConversationById = async (req, res) => {
           model: "Member",
         },
       })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "reply",
+          model: "Message",
+          populate: {
+            path: "memberId",
+            model: "Member",
+            populate: {
+              path: "userId",
+              model: "User",
+              select: "avatar name",
+            },
+          },
+        },
+      })
+
       .populate({
         path: "leader",
         populate: {
@@ -163,6 +197,22 @@ const getConversationByUserId = async (req, res) => {
             path: "userId",
             model: "User",
             select: "avatar name",
+          },
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "reply",
+          model: "Message",
+          populate: {
+            path: "memberId",
+            model: "Member",
+            populate: {
+              path: "userId",
+              model: "User",
+              select: "avatar name",
+            },
           },
         },
       })
@@ -385,6 +435,22 @@ const createConversationWeb = async (req, res) => {
         populate: {
           path: "deleteMember",
           model: "Member",
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "reply",
+          model: "Message",
+          populate: {
+            path: "memberId",
+            model: "Member",
+            populate: {
+              path: "userId",
+              model: "User",
+              select: "avatar name",
+            },
+          },
         },
       })
       .populate({
