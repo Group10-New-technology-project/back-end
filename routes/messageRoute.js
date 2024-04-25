@@ -12,7 +12,9 @@ router.post("/deleteMessage", messageController.deleteMessage);
 router.post("/thuHoiMessage", messageController.thuHoiMessage);
 router.post("/addReply", messageController.addReply);
 router.post("/senderMessageToConversations", messageController.postMessageToConversations);
-//http://localhost:3000/api/v1/messages/pinMessageToConversations
-router.post("/pinMessageToConversations", messageController.pinMessageToConversations);
+//http://localhost:3000/api/v1/messages/addPinMessageToConversations
+router.post("/addPinMessageToConversations", messageController.addPinMessageToConversations);
+//http://localhost:3000/api/v1/messages/deletePinMessageToConversations
+router.post("/deletePinMessageToConversations", messageController.deletePinMessageToConversations);
 
 module.exports = router;

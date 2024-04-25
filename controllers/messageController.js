@@ -475,7 +475,7 @@ const postMessageToConversations = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-const pinMessageToConversations = async (req, res) => {
+const addPinMessageToConversations = async (req, res) => {
   try {
     const { messageId } = req.body;
     const message = await Message.findById(messageId);
@@ -485,6 +485,22 @@ const pinMessageToConversations = async (req, res) => {
       return res.status(500).json("Message not found");
     }
     message.pin = true;
+    const messageUpdate = await message.save();
+    return res.status(200).json(messageUpdate);
+  } catch (error) {
+    return res.status(500).json({ error: "Server error" });
+  }
+};
+const deletePinMessageToConversations = async (req, res) => {
+  try {
+    const { messageId } = req.body;
+    const message = await Message.findById(messageId);
+
+    if (!message) {
+      // Nếu không tìm thấy tin nhắn, throw error
+      return res.status(500).json("Message not found");
+    }
+    message.pin = false;
     const messageUpdate = await message.save();
     return res.status(200).json(messageUpdate);
   } catch (error) {
@@ -501,5 +517,6 @@ module.exports = {
   thuHoiMessage,
   addReply,
   postMessageToConversations,
-  pinMessageToConversations,
+  addPinMessageToConversations,
+  deletePinMessageToConversations,
 };
