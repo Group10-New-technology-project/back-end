@@ -507,6 +507,148 @@ const deletePinMessageToConversations = async (req, res) => {
     return res.status(500).json({ error: "Server error" });
   }
 };
+const addPinMessageToConversation = async (req, res) => {
+  try {
+    const { conversationId, messageId } = req.body;
+
+    if (!conversationId || !messageId) {
+      return res.status(400).json("conversationId and messageId are required");
+    }
+
+    const conversation = await Conversation.findById(conversationId);
+
+    if (!conversation) {
+      return res.status(404).json("Conversation not found");
+    }
+    if (conversation.pinMessages && conversation.pinMessages.includes(messageId)) {
+      return res.status(400).json("Message is already pinned in this conversation");
+    }
+
+    if (!conversation.pinMessages) {
+      conversation.pinMessages = [];
+    }
+
+    conversation.pinMessages.push(messageId);
+
+    await conversation.save();
+
+    // Trả về cuộc trò chuyện đã cập nhật
+    return res.status(200).json(conversation);
+  } catch (error) {
+    console.error("Error adding pin message to conversation:", error);
+    return res.status(500).json("Internal server error");
+  }
+};
+const deletePinMessageToConversation = async (req, res) => {
+  try {
+    const { conversationId, messageId } = req.body;
+
+    if (!conversationId || !messageId) {
+      return res.status(400).json("conversationId and messageId are required");
+    }
+
+    const conversation = await Conversation.findById(conversationId);
+
+    if (!conversation) {
+      return res.status(404).json("Conversation not found");
+    }
+
+    if (!conversation.pinMessages || conversation.pinMessages.length === 0) {
+      return res.status(400).json("There are no pinned messages in this conversation");
+    }
+
+    // Tìm index của messageId trong mảng pinMessages
+    const index = conversation.pinMessages.indexOf(messageId);
+
+    // Kiểm tra xem messageId có tồn tại trong mảng pinMessages không
+    if (index === -1) {
+      return res.status(404).json("Message not found in pinned messages");
+    }
+
+    // Xóa messageId khỏi mảng pinMessages
+    conversation.pinMessages.splice(index, 1);
+
+    await conversation.save();
+
+    // Trả về cuộc trò chuyện đã cập nhật sau khi xóa tin nhắn được ghim
+    return res.status(200).json(conversation);
+  } catch (error) {
+    console.error("Error removing pin message from conversation:", error);
+    return res.status(500).json("Internal server error");
+  }
+};
+const prioritizePinMessage = async (req, res) => {
+  try {
+    const { conversationId, messageId } = req.body;
+
+    if (!conversationId || !messageId) {
+      return res.status(400).json("conversationId and messageId are required");
+    }
+
+    const conversation = await Conversation.findById(conversationId);
+
+    if (!conversation) {
+      return res.status(404).json("Conversation not found");
+    }
+
+    if (!conversation.pinMessages || conversation.pinMessages.length === 0) {
+      return res.status(400).json("There are no pinned messages in this conversation");
+    }
+
+    // Tìm index của messageId trong mảng pinMessages
+    const index = conversation.pinMessages.indexOf(messageId);
+
+    // Kiểm tra xem messageId có tồn tại trong mảng pinMessages không
+    if (index === -1) {
+      return res.status(404).json("Message not found in pinned messages");
+    }
+
+    // Di chuyển tin nhắn được ghim lên đầu mảng
+    conversation.pinMessages.splice(index, 1);
+    conversation.pinMessages.unshift(messageId);
+
+    await conversation.save();
+
+    // Trả về cuộc trò chuyện đã cập nhật sau khi sắp xếp tin nhắn được ghim
+    return res.status(200).json(conversation);
+  } catch (error) {
+    console.error("Error prioritizing pin message in conversation:", error);
+    return res.status(500).json("Internal server error");
+  }
+};
+const getAllPinMessages = async (req, res) => {
+  try {
+    const { conversationId } = req.body; // Lấy id của cuộc trò chuyện từ request parameters
+
+    if (!conversationId) {
+      return res.status(400).json("conversationId is required");
+    }
+
+    const conversation = await Conversation.findById(conversationId).populate({
+      path: "pinMessages",
+      select: "_id, content",
+      populate: {
+        path: "memberId",
+        select: "_id",
+        populate: {
+          path: "userId",
+          model: "User",
+          select: "name",
+        },
+      },
+    }); // Sử dụng populate để lấy thông tin chi tiết của các tin nhắn được ghim
+
+    if (!conversation) {
+      return res.status(404).json("Conversation not found");
+    }
+
+    // Trả về danh sách các tin nhắn được ghim trong cuộc trò chuyện
+    return res.status(200).json(conversation.pinMessages);
+  } catch (error) {
+    console.error("Error getting all pin messages in conversation:", error);
+    return res.status(500).json("Internal server error");
+  }
+};
 
 module.exports = {
   postMessage,
@@ -519,4 +661,8 @@ module.exports = {
   postMessageToConversations,
   addPinMessageToConversations,
   deletePinMessageToConversations,
+  addPinMessageToConversation,
+  deletePinMessageToConversation,
+  prioritizePinMessage,
+  getAllPinMessages,
 };

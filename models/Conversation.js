@@ -25,6 +25,13 @@ const conversationSchema = new mongoose.Schema(
         required: true,
       },
     ],
+    pinMessages: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Message", // Tham chiếu tới collection 'Message'
+        default: null,
+      },
+    ],
     leader: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Member", // Tham chiếu tới collection 'Member'

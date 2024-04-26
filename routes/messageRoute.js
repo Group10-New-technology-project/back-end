@@ -16,5 +16,13 @@ router.post("/senderMessageToConversations", messageController.postMessageToConv
 router.post("/addPinMessageToConversations", messageController.addPinMessageToConversations);
 //http://localhost:3000/api/v1/messages/deletePinMessageToConversations
 router.post("/deletePinMessageToConversations", messageController.deletePinMessageToConversations);
+//http://localhost:3000/api/v1/messages/addPinMessageToConversation
+router.post("/addPinMessageToConversation", messageController.addPinMessageToConversation);
+//http://localhost:3000/api/v1/messages/deletePinMessageToConversation
+router.post("/deletePinMessageToConversation", messageController.deletePinMessageToConversation);
+//http://localhost:3000/api/v1/messages/prioritizePinMessage
+router.post("/prioritizePinMessage", messageController.prioritizePinMessage);
+//http://localhost:3000/api/v1/messages/getAllPinMessages
+router.get("/getAllPinMessages", messageController.getAllPinMessages);
 
 module.exports = router;
