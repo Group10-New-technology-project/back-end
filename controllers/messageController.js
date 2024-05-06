@@ -531,9 +531,22 @@ const addPinMessageToConversation = async (req, res) => {
     conversation.pinMessages.unshift(messageId);
 
     await conversation.save();
+    const updateConversation = await Conversation.findById(conversationId).populate({
+      path: "pinMessages",
+      select: "_id content type",
+      populate: {
+        path: "memberId",
+        select: "_id",
+        populate: {
+          path: "userId",
+          model: "User",
+          select: "name",
+        },
+      },
+    });
 
     // Trả về cuộc trò chuyện đã cập nhật
-    return res.status(200).json(conversation);
+    return res.status(200).json(updateConversation);
   } catch (error) {
     console.error("Error adding pin message to conversation:", error);
     return res.status(500).json("Internal server error");
@@ -569,9 +582,22 @@ const deletePinMessageToConversation = async (req, res) => {
     conversation.pinMessages.splice(index, 1);
 
     await conversation.save();
+    const updateConversation = await Conversation.findById(conversationId).populate({
+      path: "pinMessages",
+      select: "_id content type",
+      populate: {
+        path: "memberId",
+        select: "_id",
+        populate: {
+          path: "userId",
+          model: "User",
+          select: "name",
+        },
+      },
+    });
 
     // Trả về cuộc trò chuyện đã cập nhật sau khi xóa tin nhắn được ghim
-    return res.status(200).json(conversation);
+    return res.status(200).json(updateConversation);
   } catch (error) {
     console.error("Error removing pin message from conversation:", error);
     return res.status(500).json("Internal server error");
@@ -649,7 +675,30 @@ const getAllPinMessages = async (req, res) => {
     return res.status(500).json("Internal server error");
   }
 };
+const getMessageById = async (req, res) => {
+  try {
+    const { messageId } = req.body;
 
+    // Kiểm tra xem có tồn tại id tin nhắn không
+    if (!messageId) {
+      return res.status(400).json({ error: "Message ID is required" });
+    }
+
+    // Tìm tin nhắn bằng id
+    const message = await Message.findById(messageId);
+
+    // Kiểm tra xem tin nhắn có tồn tại không
+    if (!message) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+
+    // Trả về thông tin tin nhắn
+    res.json(message);
+  } catch (error) {
+    console.error("Error fetching message by id:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 module.exports = {
   postMessage,
   getMessagesByConversationId,
@@ -665,4 +714,5 @@ module.exports = {
   deletePinMessageToConversation,
   prioritizePinMessage,
   getAllPinMessages,
+  getMessageById,
 };
