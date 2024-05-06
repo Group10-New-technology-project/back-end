@@ -35,6 +35,19 @@ const getConversations = async (req, res) => {
         },
       })
       .populate({
+        path: "pinMessages",
+        select: "_id content type",
+        populate: {
+          path: "memberId",
+          select: "_id",
+          populate: {
+            path: "userId",
+            model: "User",
+            select: "name",
+          },
+        },
+      })
+      .populate({
         path: "messages",
         populate: {
           path: "reply",
@@ -131,6 +144,19 @@ const getConversationById = async (req, res) => {
         },
       })
       .populate({
+        path: "pinMessages",
+        select: "_id content type",
+        populate: {
+          path: "memberId",
+          select: "_id",
+          populate: {
+            path: "userId",
+            model: "User",
+            select: "name",
+          },
+        },
+      })
+      .populate({
         path: "deputy",
         populate: {
           path: "userId",
@@ -197,6 +223,19 @@ const getConversationByUserId = async (req, res) => {
             path: "userId",
             model: "User",
             select: "avatar name",
+          },
+        },
+      })
+      .populate({
+        path: "pinMessages",
+        select: "_id content type",
+        populate: {
+          path: "memberId",
+          select: "_id",
+          populate: {
+            path: "userId",
+            model: "User",
+            select: "name",
           },
         },
       })

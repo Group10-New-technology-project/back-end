@@ -528,7 +528,7 @@ const addPinMessageToConversation = async (req, res) => {
       conversation.pinMessages = [];
     }
 
-    conversation.pinMessages.push(messageId);
+    conversation.pinMessages.unshift(messageId);
 
     await conversation.save();
 
@@ -626,7 +626,7 @@ const getAllPinMessages = async (req, res) => {
 
     const conversation = await Conversation.findById(conversationId).populate({
       path: "pinMessages",
-      select: "_id, content",
+      select: "_id content type",
       populate: {
         path: "memberId",
         select: "_id",
