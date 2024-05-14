@@ -500,6 +500,16 @@ const getUserByUserName = async (req, res) => {
   }
 };
 
+const getAllUserName = async (req, res) => {
+  try {
+    const users = await User.find(); // Lấy tất cả các người dùng từ cơ sở dữ liệu
+    const listUsernames = users.map((user) => user.username); // Lấy danh sách tên người dùng từ các đối tượng người dùng
+    res.status(200).json(listUsernames); // Trả về mảng các tên người dùng
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
 module.exports = {
   login,
   signup,
@@ -522,4 +532,5 @@ module.exports = {
   getfriendRequestWeb,
   getfriendRecivedWeb,
   getFriendWithDetails,
+  getAllUserName,
 };

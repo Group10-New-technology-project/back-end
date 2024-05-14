@@ -56,4 +56,7 @@ router.get("/getfriendRequestWeb/:id", userController.getfriendRequestWeb);
 router.get("/getfriendRecivedWeb/:id", userController.getfriendRecivedWeb);
 // get friend with details
 router.get("/getFriendWithDetails/:id", userController.getFriendWithDetails);
+// get All username
+router.get("/demo/getAllUserName", userController.getAllUserName);
+//
 module.exports = router;
