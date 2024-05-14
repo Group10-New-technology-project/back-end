@@ -10,7 +10,6 @@ AWS.config.update({
   secretAccessKey: process.env.SECRET_ACCESS_KEY,
 });
 const s3 = new AWS.S3();
-
 // Cấu hình multer để xử lý tải lên ảnh
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -52,7 +51,7 @@ const signup = async (req, res) => {
       username: username,
       password: hashedPassword,
       avatar: imageAvatar,
-      coveravatar: "",
+      coveravatar: "https://i.pinimg.com/564x/7b/8f/3a/7b8f3a829162b7656214494b0b87e4e0.jpg",
       dateofbirth: birthday,
       gender: gender,
       name: name,
@@ -509,6 +508,37 @@ const getAllUserName = async (req, res) => {
     res.status(500).json(err);
   }
 };
+const updateAvatar = async (req, res) => {
+  const { id, avatar } = req.body;
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    user.avatar = avatar;
+    await user.save();
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+const updateCoverAvatar = async (req, res) => {
+  const { id, coveravatar } = req.body;
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+    user.coveravatar = coveravatar;
+    await user.save();
+    res.status(200).json(user);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
 
 module.exports = {
   login,
@@ -533,4 +563,6 @@ module.exports = {
   getfriendRecivedWeb,
   getFriendWithDetails,
   getAllUserName,
+  updateAvatar,
+  updateCoverAvatar,
 };

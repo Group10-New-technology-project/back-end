@@ -677,28 +677,29 @@ const getAllPinMessages = async (req, res) => {
 };
 const getMessageById = async (req, res) => {
   try {
-    const { messageId } = req.body;
-
+    const { messageId } = req.params; // Ensure messageId is taken from req.params
+    console.log("Received request to fetch message with ID:", messageId); // Debug log
     // Kiểm tra xem có tồn tại id tin nhắn không
     if (!messageId) {
+      console.warn("No messageId provided in request"); // Warning log
       return res.status(400).json({ error: "Message ID is required" });
     }
-
     // Tìm tin nhắn bằng id
     const message = await Message.findById(messageId);
-
     // Kiểm tra xem tin nhắn có tồn tại không
     if (!message) {
+      console.warn(`Message with ID ${messageId} not found`); // Warning log
       return res.status(404).json({ error: "Message not found" });
     }
-
+    console.log("Message found:", message); // Debug log
     // Trả về thông tin tin nhắn
-    res.json(message);
+    return res.json(message);
   } catch (error) {
-    console.error("Error fetching message by id:", error);
-    res.status(500).json({ error: "Internal server error" });
+    console.error("Error fetching message by id:", error); // Error log
+    return res.status(500).json({ error: "Internal server error" });
   }
 };
+
 module.exports = {
   postMessage,
   getMessagesByConversationId,

@@ -344,10 +344,19 @@ const getConversationByIdApp = async (req, res) => {
 };
 const createConversation = async (req, res) => {
   try {
-    const { name, type, members, leader } = req.body;
+    const { members, leader } = req.body;
+    //Kiểm tra xem cuộc trò chuyện này đã được tạo hay chưa
+    const existingConversation = await Conversation.findOne({
+      members: { $all: members },
+      type: "Direct",
+    });
+    if (existingConversation) {
+      console.log("Conversation already exists");
+      return res.status(400).json({ error: "Conversation already exists" });
+    }
     const conversation = new Conversation({
-      name,
-      type,
+      name: "",
+      type: "Direct",
       members,
       messages: [],
       groupImage: "",
@@ -837,6 +846,7 @@ const deleteConversation = async (req, res) => {
     res.status(500).json({ error: "Failed to delete conversation" });
   }
 };
+
 const getArrayConversationUsersByUser = async (req, res) => {
   try {
     const userID = req.params.userID;
@@ -884,6 +894,43 @@ const updateConversationNameById = async (req, res) => {
   }
 };
 
+const getIdConversationByUserId = async (req, res) => {
+  try {
+    const { user1, user2 } = req.body;
+
+    const member1 = await Member.findOne({ userId: user1 });
+    const member2 = await Member.findOne({ userId: user2 });
+
+    if (!member1 || !member2) {
+      return res.status(404).json({ error: "One or both users not found" });
+    }
+
+    let conversation = await Conversation.findOne({
+      members: { $all: [member1._id, member2._id] },
+      type: "Direct",
+    });
+
+    if (!conversation) {
+      console.log("Chưa tạo cuộc trò chuyện, đang tạo mới...");
+      conversation = new Conversation({
+        name: "",
+        type: "Direct",
+        members: [member1._id, member2._id],
+        messages: [],
+        groupImage: "",
+        leader: member1._id,
+        createAt: new Date(),
+        isjoinfromlink: true,
+      });
+      await conversation.save();
+    }
+    return res.status(200).json(conversation._id);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   getConversations,
   getConversationById,
@@ -903,4 +950,5 @@ module.exports = {
   addUserToConversation,
   addUserToArrayConversation, // Moi them
   updateConversationNameById,
+  getIdConversationByUserId,
 };

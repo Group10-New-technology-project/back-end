@@ -58,5 +58,7 @@ router.get("/getfriendRecivedWeb/:id", userController.getfriendRecivedWeb);
 router.get("/getFriendWithDetails/:id", userController.getFriendWithDetails);
 // get All username
 router.get("/demo/getAllUserName", userController.getAllUserName);
-//
+//update Avatar
+router.post("/updateAvatar", userController.updateAvatar);
+router.post("/updateCoverAvatar", userController.updateCoverAvatar);
 module.exports = router;
