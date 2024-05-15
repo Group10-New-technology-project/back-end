@@ -61,4 +61,5 @@ router.get("/demo/getAllUserName", userController.getAllUserName);
 //update Avatar
 router.post("/updateAvatar", userController.updateAvatar);
 router.post("/updateCoverAvatar", userController.updateCoverAvatar);
+router.post("/updatePassword", userController.updatePassword);
 module.exports = router;
