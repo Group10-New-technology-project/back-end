@@ -35,10 +35,30 @@ const messageSchema = new mongoose.Schema({
   },
   reaction: [
     {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Reaction", // Tham chiếu tới collection 'Reaction' cho danh sách các phản ứng
+      memberId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Member",
+        required: true,
+      },
+      reactions: [
+        {
+          typeReaction: {
+            type: String,
+            required: true,
+          },
+          status: {
+            type: String,
+            enum: ["active", "inactive"],
+            default: "active",
+          },
+          quantity: {
+            type: Number,
+          },
+        },
+      ],
     },
   ],
+
   tag: [
     {
       type: mongoose.Schema.Types.ObjectId,

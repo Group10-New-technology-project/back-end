@@ -35,6 +35,22 @@ const getConversations = async (req, res) => {
         },
       })
       .populate({
+        path: "messages",
+        populate: {
+          path: "reaction",
+          populate: {
+            path: "memberId",
+            model: "Member",
+            select: "memberId",
+            populate: {
+              path: "userId",
+              model: "User",
+              select: "avatar name",
+            },
+          },
+        },
+      })
+      .populate({
         path: "pinMessages",
         select: "_id content type",
         populate: {
@@ -108,6 +124,22 @@ const getConversationById = async (req, res) => {
             path: "userId",
             model: "User",
             select: "avatar name",
+          },
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "reaction",
+          populate: {
+            path: "memberId",
+            model: "Member",
+            select: "memberId",
+            populate: {
+              path: "userId",
+              model: "User",
+              select: "avatar name",
+            },
           },
         },
       })
@@ -212,6 +244,29 @@ const getConversationByUserId = async (req, res) => {
         populate: {
           path: "memberId",
           model: "Member", // Tên của model người dùng trong Mongoose
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "deleteMember",
+          model: "Member",
+        },
+      })
+      .populate({
+        path: "messages",
+        populate: {
+          path: "reaction",
+          populate: {
+            path: "memberId",
+            model: "Member",
+            select: "memberId",
+            populate: {
+              path: "userId",
+              model: "User",
+              select: "avatar name",
+            },
+          },
         },
       })
       .populate({
@@ -379,7 +434,7 @@ const generateNotifications = (type, user1, user2) => {
     // For Group type, use user1's name in the notification
     return [
       {
-        message: `${user1.name} created a group`,
+        message: `${user1.name} và ${user2.name} đã trở thành bạn bè. Hãy trò chuyện nhé.`,
         date: currentDate,
       },
     ];

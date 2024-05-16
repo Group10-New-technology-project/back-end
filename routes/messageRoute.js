@@ -26,4 +26,8 @@ router.post("/prioritizePinMessage", messageController.prioritizePinMessage);
 router.post("/getAllPinMessages", messageController.getAllPinMessages);
 //http://localhost:3000/api/v1/messages/getMessageById/iddd
 router.get("/getMessageById/:messageId", messageController.getMessageById);
+
+router.post("/addReaction", messageController.addReaction);
+router.post("/deleteReaction", messageController.deleteAllReactions);
+router.post("/deleteMessageById", messageController.deleteMessageById);
 module.exports = router;

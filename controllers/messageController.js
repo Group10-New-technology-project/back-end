@@ -700,6 +700,131 @@ const getMessageById = async (req, res) => {
   }
 };
 
+const addReaction = async (req, res) => {
+  const { messageId, typeReaction, memberId } = req.body;
+  try {
+    // Tìm tin nhắn dựa trên ID
+    let message = await Message.findById(messageId).populate({
+      path: "reaction",
+      populate: {
+        path: "memberId",
+        model: "Member",
+        select: "memberId",
+        populate: {
+          path: "userId",
+          model: "User",
+          select: "avatar name",
+        },
+      },
+    });
+    if (!message) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+
+    // Tìm phản ứng của thành viên trong tin nhắn
+    let memberReaction = message.reaction.find((reaction) => reaction.memberId._id.toString() === memberId);
+    console.log("memberReaction", memberReaction);
+    if (memberReaction) {
+      // Nếu đã có phản ứng từ thành viên này, kiểm tra xem đã có loại phảnn ứng này chưa
+      const existingTypeReaction = memberReaction.reactions.find((reaction) => reaction.typeReaction === typeReaction);
+      if (existingTypeReaction) {
+        // Nếu đã có loại phản ứng này, tăng số lượng lên 1
+        existingTypeReaction.quantity += 1;
+      } else {
+        // Nếu chưa có loại phản ứng này, thêm mới vào mảng phản ứng của thành viên
+        memberReaction.reactions.push({ typeReaction, quantity: 1 });
+      }
+    } else {
+      // Nếu chưa có phản ứng từ thành viên này, tạo một phản ứng mới và thêm vào mảng phản ứng của tin nhắn
+      memberReaction = {
+        memberId,
+        reactions: [{ typeReaction, quantity: 1 }],
+      };
+      message.reaction.push(memberReaction);
+    }
+
+    // Lưu tin nhắn vào cơ sở dữ liệu
+    await message.save();
+
+    // Trả về tin nhắn đã cập nhật
+    message = await Message.findById(messageId).populate({
+      path: "reaction",
+      populate: {
+        path: "memberId",
+        model: "Member",
+        select: "memberId",
+        populate: {
+          path: "userId",
+          model: "User",
+          select: "avatar name",
+        },
+      },
+    });
+
+    return res.status(201).json(message);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+const deleteAllReactions = async (req, res) => {
+  const { messageId, memberId } = req.body;
+  try {
+    // Xóa tất cả các phản ứng của thành viên khỏi tin nhắn
+    const updatedMessage = await Message.findOneAndUpdate(
+      { _id: messageId },
+      { $pull: { reaction: { memberId: memberId } } },
+      { new: true }
+    ).populate({
+      path: "reaction",
+      populate: {
+        path: "memberId",
+        model: "Member",
+        select: "memberId",
+        populate: {
+          path: "userId",
+          model: "User",
+          select: "avatar name",
+        },
+      },
+    });
+
+    if (!updatedMessage) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+    return res.status(200).json(updatedMessage);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+const deleteMessageById = async (req, res) => {
+  try {
+    const { messageId } = req.body;
+
+    // Kiểm tra xem có tồn tại id tin nhắn không
+    if (!messageId) {
+      return res.status(400).json({ error: "Message ID is required" });
+    }
+
+    // Xóa tin nhắn dựa trên ID
+    const deletedMessage = await Message.findByIdAndDelete(messageId);
+
+    // Kiểm tra xem tin nhắn có tồn tại không
+    if (!deletedMessage) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+
+    // Trả về tin nhắn đã xóa
+    res.json(deletedMessage);
+  } catch (error) {
+    console.error("Error deleting message by id:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
 module.exports = {
   postMessage,
   getMessagesByConversationId,
@@ -716,4 +841,7 @@ module.exports = {
   prioritizePinMessage,
   getAllPinMessages,
   getMessageById,
+  addReaction,
+  deleteAllReactions,
+  deleteMessageById,
 };
