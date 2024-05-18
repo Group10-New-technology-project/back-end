@@ -675,6 +675,7 @@ const getAllPinMessages = async (req, res) => {
     return res.status(500).json("Internal server error");
   }
 };
+
 const getMessageById = async (req, res) => {
   try {
     const { messageId } = req.params; // Ensure messageId is taken from req.params
@@ -685,7 +686,29 @@ const getMessageById = async (req, res) => {
       return res.status(400).json({ error: "Message ID is required" });
     }
     // Tìm tin nhắn bằng id
-    const message = await Message.findById(messageId);
+    const message = await Message.findById(messageId)
+      .populate({
+        path: "memberId",
+        model: "Member", // Tên của model người dùng trong Mongoose
+        populate: {
+          path: "userId",
+          model: "User",
+          select: "avatar name",
+        },
+      })
+      .populate({
+        path: "reaction",
+        populate: {
+          path: "memberId",
+          model: "Member",
+          select: "memberId",
+          populate: {
+            path: "userId",
+            model: "User",
+            select: "avatar name",
+          },
+        },
+      });
     // Kiểm tra xem tin nhắn có tồn tại không
     if (!message) {
       console.warn(`Message with ID ${messageId} not found`); // Warning log

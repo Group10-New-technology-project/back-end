@@ -386,6 +386,19 @@ const getConversationByIdApp = async (req, res) => {
               },
             },
           },
+          {
+            path: "reaction",
+            model: "Message",
+            populate: {
+              path: "memberId",
+              model: "Member",
+              populate: {
+                path: "userId",
+                model: "User",
+                select: "avatar name",
+              },
+            },
+          },
         ],
       });
     if (!conversation) {
