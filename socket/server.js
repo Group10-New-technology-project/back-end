@@ -54,9 +54,9 @@ function initializeSocketServer(server) {
       console.log(`User ${userId} joined room ${roomId}`);
       console.log("Updated listUserInRoom after user joined:", listUserInRoom);
 
-      io.to(roomId).emit("message", `User ${userId} joined room ${roomId}`);
+      io.to(roomId).emit("message");
       const usersInRoom = listUserInRoom.filter((user) => user.roomId === roomId);
-      io.to(roomId).emit("usersInRoom", usersInRoom);
+      io.to(roomId).emit("usersInRoom");
     });
 
     // Xử lý khi một người dùng gửi tin nhắn

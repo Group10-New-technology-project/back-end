@@ -27,6 +27,9 @@ router.post("/getAllPinMessages", messageController.getAllPinMessages);
 //http://localhost:3000/api/v1/messages/getMessageById/iddd
 router.get("/getMessageById/:messageId", messageController.getMessageById);
 
+//http://localhost:3000/api/v1/messages/getMessageById
+router.post("/getMessageByIdWeb", messageController.getMessageByIdWeb);
+
 router.post("/addReaction", messageController.addReaction);
 router.post("/deleteReaction", messageController.deleteAllReactions);
 router.post("/deleteMessageById", messageController.deleteMessageById);

@@ -685,7 +685,29 @@ const getMessageById = async (req, res) => {
       return res.status(400).json({ error: "Message ID is required" });
     }
     // Tìm tin nhắn bằng id
-    const message = await Message.findById(messageId);
+    const message = await Message.findById(messageId)
+      .populate({
+        path: "memberId",
+        model: "Member", // Tên của model người dùng trong Mongoose
+        populate: {
+          path: "userId",
+          model: "User",
+          select: "avatar name",
+        },
+      })
+      .populate({
+        path: "reaction",
+        populate: {
+          path: "memberId",
+          model: "Member",
+          select: "memberId",
+          populate: {
+            path: "userId",
+            model: "User",
+            select: "avatar name",
+          },
+        },
+      });
     // Kiểm tra xem tin nhắn có tồn tại không
     if (!message) {
       console.warn(`Message with ID ${messageId} not found`); // Warning log
@@ -700,6 +722,30 @@ const getMessageById = async (req, res) => {
   }
 };
 
+const getMessageByIdWeb = async (req, res) => {
+  try {
+    const { messageId } = req.body;
+
+    // Kiểm tra xem có tồn tại id tin nhắn không
+    if (!messageId) {
+      return res.status(400).json({ error: "Message ID is required" });
+    }
+
+    // Tìm tin nhắn bằng id
+    const message = await Message.findById(messageId);
+
+    // Kiểm tra xem tin nhắn có tồn tại không
+    if (!message) {
+      return res.status(404).json({ error: "Message not found" });
+    }
+
+    // Trả về thông tin tin nhắn
+    res.json(message);
+  } catch (error) {
+    console.error("Error fetching message by id:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
 const addReaction = async (req, res) => {
   const { messageId, typeReaction, memberId } = req.body;
   try {
@@ -844,4 +890,5 @@ module.exports = {
   addReaction,
   deleteAllReactions,
   deleteMessageById,
+  getMessageByIdWeb,
 };
