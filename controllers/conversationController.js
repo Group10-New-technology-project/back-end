@@ -433,7 +433,7 @@ const createConversation = async (req, res) => {
       isjoinfromlink: true,
     });
     await conversation.save();
-    res.status(201).json(conversation);
+    // res.status(201).json(conversation);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
@@ -452,7 +452,6 @@ const generateNotifications = (type, user1, user2) => {
       },
     ];
   } else {
-    // For Direct type, notify both users
     return [
       {
         message: `${user1.name} started a conversation with ${user2.name}`,

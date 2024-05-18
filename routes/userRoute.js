@@ -2,64 +2,56 @@ const { Router } = require("express");
 const userController = require("../controllers/userController");
 const multer = require("multer");
 const router = Router();
-
+// API //
 // http://localhost:3000/api/v1/users/login
 router.post("/login", userController.login);
 // http://localhost:3000/api/v1/users/sinup
 router.post("/sinup", userController.signup);
-// lấy ra danh sách bạn bè của 1 user  theo id cuả user
 // http://localhost:3000/api/v1/users/getfriend/60aae4843ae33121e0de8506
 router.get("/getfriend/:id", userController.getfriend);
-// lấy ra danh bạ của 1 user theo id của user
 // http://localhost:3000/api/v1/users/getphonebook/60aae4843ae33121e0de8506
 router.get("/getphonebook/:id", userController.getPhoneBook);
-//get all user
-router.get("/", userController.getAllUser);
-//get delete user
+// http://localhost:3000/api/v1/users/getAllUser
+router.get("/getAllUser", userController.getAllUser);
+// http://localhost:3000/api/v1/users/60aae4843ae33121e0de8506
 router.delete("/:id", userController.deleteUser);
-//get  user by id
-///http://192.168.0.201:3000/api/v1/users/60aae4843ae33121e0de8506
+// http://localhost:3000/api/v1/users/60aae4843ae33121e0de8506
 router.get("/:id", userController.getUserByID);
-//upload avatar s3
+// http://localhost:3000/api/v1/users/upload-avatar/60aae4843ae33121e0de8506
 router.post("/upload-avatar", multer().single("avatar"), userController.uploadAvatarToS3);
-//upload pasword  mới
+// http://localhost:3000/api/v1/users/updateMK
 router.post("/updateMK", userController.updateMK);
 //http://localhost:3000/api/v1/users/username
 router.post("/username", userController.postUserByUserName);
-//forgot password
 //http://localhost:3000/api/v1/users/forgot-password
 router.post("/forgot-password", userController.forgotPassword);
-// get friend request
 // http://localhost:3000/api/v1/users/getfriendRequest/60aae4843ae33121e0de8506
 router.get("/getfriendRequest/:id", userController.getfriendRequest);
-// get friend recive
 // http://localhost:3000/api/v1/users/getfriendRecived/60aae4843ae33121e0de8506
 router.get("/getfriendRecived/:id", userController.getfriendRecived);
-// add friend request
+// http://localhost:3000/api/v1/users/getFriendWithDetails/60aae4843ae33121e0de8506
 router.post("/addFriendRequest", userController.addFriendRequest);
-// delete friend request
-//http://192.168.0.201:3000/api/v1/users/deleteFriendRequest
+// http://localhost:3000/api/v1/users/deleteFriendRequest
 router.post("/deleteFriendRequest", userController.deleteFriendRequest);
-// accept friend request
-//http://192.168.0.201:3000/api/v1/users/acceptFriendRequest
+// http://localhost:3000/api/v1/users/acceptFriendRequest
 router.post("/acceptFriendRequest", userController.acceptFriendRequest);
-// delete friends
-//http://192.168.0.201:3000/api/v1/users/deleteFriends
+// http://localhost:3000/api/v1/users/deleteFriends
 router.post("/deleteFriends", userController.deleteFriends);
-//get  user by username
-// GET http://192.168.0.201:3000/api/v1/users/username/username_example
+// GET http://localhost:3000/api/v1/users/username/username_example
 router.get("/username/:username", userController.getUserByUserName);
 // http://localhost:3000/api/v1/users/getfriendRequest/60aae4843ae33121e0de8506
 router.get("/getfriendRequestWeb/:id", userController.getfriendRequestWeb);
-// get friend recive web
 // http://localhost:3000/api/v1/users/getfriendRecived/60aae4843ae33121e0de8506
 router.get("/getfriendRecivedWeb/:id", userController.getfriendRecivedWeb);
-// get friend with details
+// http://localhost:3000/api/v1/users/getFriendWithDetails/60aae4843ae33121e0de8506
 router.get("/getFriendWithDetails/:id", userController.getFriendWithDetails);
-// get All username
+// http://localhost:3000/api/v1/users/demo/getAllUserName
 router.get("/demo/getAllUserName", userController.getAllUserName);
-//update Avatar
+//http://localhost:3000/api/v1/users/updateAvatar
 router.post("/updateAvatar", userController.updateAvatar);
+// http://localhost:3000/api/v1/users/updateCoverAvatar
 router.post("/updateCoverAvatar", userController.updateCoverAvatar);
+// http://localhost:3000/api/v1/users/updatePassword
 router.post("/updatePassword", userController.updatePassword);
+// API //
 module.exports = router;
