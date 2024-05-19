@@ -36,7 +36,6 @@ const postMessageWeb = async (req, res) => {
     }
     // Thêm tin nhắn vào cuộc trò chuyện hoặc nhóm
     conversation.messages.push(newMessage._id);
-    console.log("messageId vuuar adfd ", newMessage.id);
     await conversation.save();
     const conversation2 = await Conversation.findById(conversationId)
       .populate({
@@ -147,10 +146,13 @@ const uploadImageToS3 = async (req, res) => {
   try {
     const { originalname, buffer, mimetype } = req.file;
 
-    // Specify key and parameters for S3 upload
+    const currentTime = new Date();
+    const formattedTime = currentTime.toISOString().slice(0, 19).replace(/[-T:]/g, "");
+    const milliseconds = currentTime.getMilliseconds();
+
     const params = {
       Bucket: process.env.S3_BUCKET_NAME,
-      Key: `${Date.now()}_${originalname}`,
+      Key: `${formattedTime}/${milliseconds}/${originalname}`,
       Body: buffer,
       ContentType: mimetype,
     };
