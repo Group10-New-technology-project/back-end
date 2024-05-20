@@ -53,5 +53,7 @@ router.post("/updateAvatar", userController.updateAvatar);
 router.post("/updateCoverAvatar", userController.updateCoverAvatar);
 // http://localhost:3000/api/v1/users/updatePassword
 router.post("/updatePassword", userController.updatePassword);
+router.post("/changePassword", userController.changePassword);
+
 // API //
 module.exports = router;

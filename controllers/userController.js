@@ -262,7 +262,7 @@ const addFriendRequest = async (req, res) => {
     const newFriendReceived = {
       _id: id_sender, // Người gửi yêu cầu kết bạn
       date: new Date(), // Ngày hiện tại
-      content: "You have received a friend request", // Nội dung thông báo
+      content: "Bạn đã nhận được lời mời kết bạn!", // Nội dung thông báo
     };
 
     // Thêm newFriendReceived vào mảng friendReceived của receiver
@@ -455,7 +455,6 @@ const postUserByUserName = async (req, res) => {
 
     res.status(200).json(user);
   } catch (error) {
-    console.error(error);
     res.status(500).json({ error: "Server error" });
   }
 };
@@ -558,6 +557,34 @@ const updatePassword = async (req, res) => {
   }
 };
 
+const changePassword = async (req, res) => {
+  const { username, passwordOld, passwordNew } = req.body; // Thêm passwordOld vào đây
+  try {
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(401).json({ error: "Invalid username" });
+    }
+
+    // Kiểm tra mật khẩu cũ
+    const isPasswordValid = await bcrypt.compare(passwordOld, user.password);
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "Invalid old password" });
+    }
+
+    // Cập nhật mật khẩu mới trong cơ sở dữ liệu
+    const salt = await bcrypt.genSalt(10);
+    const hashedPasswordNew = await bcrypt.hash(passwordNew, salt);
+    user.password = hashedPasswordNew;
+    await user.save();
+
+    // Gửi phản hồi thành công
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
 module.exports = {
   login,
   signup,
@@ -584,4 +611,5 @@ module.exports = {
   updateAvatar,
   updateCoverAvatar,
   updatePassword,
+  changePassword,
 };

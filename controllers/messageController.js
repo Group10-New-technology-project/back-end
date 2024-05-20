@@ -874,6 +874,42 @@ const deleteMessageById = async (req, res) => {
   }
 };
 
+const deleteAllReactionByMessageID = async (req, res) => {
+  const { messageId } = req.body;
+  try {
+    // Đảm bảo tin nhắn tồn tại trước khi cập nhật
+    const message = await Message.findById(messageId);
+
+    if (!message) {
+      return res.status(404).json({ error: "Không tìm thấy tin nhắn" });
+    }
+
+    // Đặt trường reaction thành mảng rỗng nếu nó không tồn tại
+    const updatedMessage = await Message.findByIdAndUpdate(
+      messageId,
+      { $set: { reaction: [] } },
+      { new: true, upsert: true } // `upsert: true` đảm bảo tài liệu được tạo nếu nó không tồn tại
+    ).populate({
+      path: "reaction",
+      populate: {
+        path: "memberId",
+        model: "Member",
+        select: "memberId",
+        populate: {
+          path: "userId",
+          model: "User",
+          select: "avatar name",
+        },
+      },
+    });
+
+    return res.status(200).json(updatedMessage);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Lỗi máy chủ" });
+  }
+};
+
 module.exports = {
   postMessage,
   getMessagesByConversationId,
@@ -894,4 +930,5 @@ module.exports = {
   deleteAllReactions,
   deleteMessageById,
   getMessageByIdWeb,
+  deleteAllReactionByMessageID,
 };

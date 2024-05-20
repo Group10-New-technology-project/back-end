@@ -32,4 +32,7 @@ router.post("/addReaction", messageController.addReaction);
 router.post("/deleteReaction", messageController.deleteAllReactions);
 //http://localhost:3000/api/v1/messages/deleteReactionById
 router.post("/deleteMessageById", messageController.deleteMessageById);
+//http://localhost:3000/api/v1/messages/deleteAllReactionByMessageID
+router.post("/deleteAllReactionByMessageID", messageController.deleteAllReactionByMessageID);
+
 module.exports = router;

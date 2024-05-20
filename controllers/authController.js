@@ -34,10 +34,10 @@ const authController = {
       const newUser = new User({
         username: username,
         password: hashedPassword,
-        avatar: "https://image666666.s3.ap-southeast-1.amazonaws.com/no-image.png",
-        coveravatar: "https://image666666.s3.ap-southeast-1.amazonaws.com/no-image.png",
+        avatar: "https://www.phanmemninja.com/wp-content/uploads/2023/07/anh-dai-dien-zalo-mac-dinh-21.jpg",
+        coveravatar: "https://www.phanmemninja.com/wp-content/uploads/2023/07/anh-dai-dien-zalo-mac-dinh-21.jpg",
         dateofbirth: "",
-        gender: "Nam",
+        gender: "Khác",
         name: name,
         phoneBook: [],
         friends: [],
