@@ -940,21 +940,16 @@ const getArrayConversationUsersByUser = async (req, res) => {
 
 const updateConversationNameById = async (req, res) => {
   const { conversationID, name } = req.body;
-
   try {
     // Tìm conversation dựa trên conversationID
     const conversation = await Conversation.findById(conversationID);
-
     if (!conversation) {
       return res.status(404).json({ error: "Conversation not found" });
     }
-
     // Cập nhật trường name của conversation
     conversation.name = name;
-
     // Lưu lại conversation đã cập nhật vào cơ sở dữ liệu
     const updatedConversation = await conversation.save();
-
     return res.status(200).json(updatedConversation); // Trả về conversation sau khi đã được cập nhật
   } catch (error) {
     return res.status(500).json({ error: "Internal server error" }); // Trả về lỗi nếu có lỗi xảy ra
